@@ -1,0 +1,13 @@
+node_modules
+bun.lockb
+dist
+*.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.DS_Store
+*.log
+coverage
+.next
+.turbo
+.vercel

@@ -1,0 +1,48 @@
+{
+  "name": "@alexanderfortin/pi-tavily-tools",
+  "author": "Alexander Fortin",
+  "version": "0.1.0",
+  "description": "Pi coding agent extension for web search using Tavily",
+  "keywords": [
+    "pi-package",
+    "tavily",
+    "web-search",
+    "search"
+  ],
+  "type": "module",
+  "license": "MIT",
+  "pi": {
+    "extensions": [
+      "./src/index.ts"
+    ]
+  },
+  "scripts": {
+    "check": "tsc --noEmit",
+    "check:watch": "tsc --noEmit --watch",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "reinstall": "bun run clean && bun install"
+  },
+  "devDependencies": {
+    "@mariozechner/pi-ai": "*",
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-tui": "*",
+    "@sinclair/typebox": "*",
+    "@types/bun": "^1.3.11",
+    "@types/node": "^25.5.2",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "eslint": "^10.2.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.4.2",
+    "prettier-plugin-organize-imports": "^4.1.0",
+    "typescript": "^6.0.0"
+  },
+  "dependencies": {
+    "@tavily/core": "^0.7.2"
+  }
+}
