@@ -39,6 +39,7 @@ You can get a free one at <https://tavily.com>
 
 ### Shared Features
 
+- **Usage in Footer:** Show current percentage of Tavily quota used in the footer
 - **Proper Truncation:** Output truncated to 50KB / 2000 lines to avoid context overflow
 - **Custom TUI Rendering:** Beautiful display with expandable results
 - **Error Handling:** Graceful failures with helpful error messages

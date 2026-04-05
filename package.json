@@ -1,7 +1,7 @@
 {
   "name": "@alexanderfortin/pi-tavily-tools",
   "author": "Alexander Fortin",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Pi coding agent extension for web search and content extraction using Tavily",
   "keywords": [
     "pi-package",
@@ -33,6 +33,7 @@
     "dist",
     "package.json",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "peerDependencies": {
@@ -75,6 +76,7 @@
     "typescript": "^6.0.0"
   },
   "dependencies": {
-    "@tavily/core": "^0.7.2"
+    "@tavily/core": "^0.7.2",
+    "temporal-polyfill": "^0.3.2"
   }
 }

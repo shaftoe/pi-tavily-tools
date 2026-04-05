@@ -10,32 +10,41 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { createTavilyClient } from "./tools/tavily/client.js";
 import { registerWebExtractTool } from "./tools/web-extract.js";
 import { registerWebSearchTool } from "./tools/web-search.js";
+import { TavilyUsageCache } from "./usage/status.js";
 
 /**
  * Main extension entry point.
+ *
+ * Requires TAVILY_API_KEY to be set — if missing, no hooks are registered
+ * and the extension is effectively a no-op.
  *
  * Defers tool registration to `session_start` so Pi can start
  * even if the TAVILY_API_KEY is missing. The tool is registered only
  * once on the first agent run and persists across sessions.
  */
 export default function (pi: ExtensionAPI): void {
-  let registered = false;
+  const apiKey = process.env.TAVILY_API_KEY;
+  if (!apiKey) return;
 
-  pi.on("session_start", (_event, ctx) => {
+  let registered = false;
+  const usageCache = new TavilyUsageCache(apiKey);
+
+  pi.on("session_start", async (_event, ctx) => {
     if (registered) return;
     registered = true;
 
-    try {
-      const client = createTavilyClient();
-      registerWebSearchTool(pi, client);
-      registerWebExtractTool(pi, client);
-    } catch (error) {
-      if (error instanceof Error) {
-        ctx.ui.notify(`[pi-tavily-tools] ${error.message}`, "error");
-      } else {
-        // Re-throw non-Error types (shouldn't happen, but be safe)
-        throw error;
-      }
-    }
+    const client = createTavilyClient(apiKey);
+    registerWebSearchTool(pi, client);
+    registerWebExtractTool(pi, client);
+
+    await usageCache.updateStatus(ctx);
+  });
+
+  pi.on("turn_end", async (_event, ctx) => {
+    await usageCache.updateStatus(ctx);
+  });
+
+  pi.on("session_shutdown", (_event, ctx) => {
+    usageCache.clear(ctx);
   });
 }
