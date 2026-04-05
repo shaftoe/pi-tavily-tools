@@ -1,7 +1,7 @@
 {
   "name": "@alexanderfortin/pi-tavily-tools",
   "author": "Alexander Fortin",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Pi coding agent extension for web search using Tavily",
   "keywords": [
     "pi-package",
@@ -10,14 +10,42 @@
     "search"
   ],
   "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "license": "MIT",
   "pi": {
     "extensions": [
-      "./src/index.ts"
+      "./dist/index.js"
     ]
   },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-ai": "*",
+    "@mariozechner/pi-tui": "*",
+    "@sinclair/typebox": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shaftoe/pi-tavily-tools"
+  },
   "scripts": {
-    "check": "tsc --noEmit",
+    "build": "bun run check && tsc",
+    "check": "tsc --noEmit --project tsconfig.test.json",
     "check:watch": "tsc --noEmit --watch",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
@@ -25,7 +53,8 @@
     "format:fix": "prettier --write .",
     "test": "bun test",
     "test:watch": "bun test --watch",
-    "reinstall": "bun run clean && bun install"
+    "release": "bun run build && npm publish --access public",
+    "release:dry-run": "bun run build && npm publish --dry-run"
   },
   "devDependencies": {
     "@mariozechner/pi-ai": "*",

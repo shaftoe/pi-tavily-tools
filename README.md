@@ -357,6 +357,14 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - **Tavily Documentation:** [https://docs.tavily.com](https://docs.tavily.com)
 - **Pi Documentation:** [https://shittycodingagent.ai](https://shittycodingagent.ai)
 
+## Releasing
+
+This project uses automated publishing to NPM via GitHub Actions. The workflow will:
+
+- Run all CI checks
+- Build the package
+- Publish to NPM with provenance (signed) via [trusted publishing](https://docs.npmjs.com/trusted-publishers)
+
 ## Acknowledgments
 
 Built with:
