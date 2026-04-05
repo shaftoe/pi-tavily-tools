@@ -54,7 +54,7 @@ describe("formatWebSearchResponse", () => {
     expect(output).toContain("No results found.");
   });
 
-  test("truncates content at 300 characters", () => {
+  test("includes full content without snippet truncation", () => {
     const longContent = "a".repeat(400);
     const results = [
       {
@@ -67,8 +67,7 @@ describe("formatWebSearchResponse", () => {
 
     const output = formatWebSearchResponse(null, results, [], false);
 
-    expect(output).toContain("Content: " + "a".repeat(300) + "...");
-    expect(output).not.toContain("a".repeat(301));
+    expect(output).toContain("Content: " + "a".repeat(400));
   });
 
   test("prefers rawContent over content when both are present", () => {

@@ -57,7 +57,8 @@ export async function applyTruncation(
     content += `showing ${truncation.outputLines} of ${truncation.totalLines} lines, `;
     content += `(${formatSize(truncation.outputBytes)} of ${formatSize(truncation.totalBytes)}). `;
     content += `${truncatedLines} lines (${formatSize(truncatedBytes)}) omitted. `;
-    content += `Full output saved to: ${tempFile}]`;
+    content += `Full output saved to: ${tempFile}. `;
+    content += "Use the read tool to read the full output from this file.]";
 
     return {
       content,

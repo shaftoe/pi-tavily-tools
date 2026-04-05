@@ -3,7 +3,7 @@
  */
 
 import { Text, truncateToWidth } from "@mariozechner/pi-tui";
-import type { SearchResponseDetails, WebSearchDetails } from "./types.js";
+import type { SearchResponseDetails, WebExtractDetails, WebSearchDetails } from "./types.js";
 
 // ============================================================================
 // Types
@@ -101,6 +101,155 @@ export function renderWebSearchResult(
 
   // Build result display
   return renderSearchResultCommon(details, state.expanded, theme, true);
+}
+
+/**
+ * Render a web extract tool call
+ */
+export function renderExtractCall(args: Record<string, unknown>, theme: Theme): Text {
+  let text = theme.fg("toolTitle", theme.bold("web_extract "));
+  const urls = Array.isArray(args.urls) ? args.urls : [];
+  const urlCount = urls.length;
+
+  if (urlCount === 0) {
+    text += theme.fg("warning", "(no URLs)");
+  } else if (urlCount === 1) {
+    const url = typeof urls[0] === "string" ? urls[0] : "(invalid)";
+    text += theme.fg("accent", `"${url}"`);
+  } else {
+    text += theme.fg("accent", `${urlCount} URLs`);
+  }
+
+  const options: string[] = [];
+  if (args.extract_depth === "advanced") {
+    options.push("advanced");
+  }
+  if (args.include_images === true) {
+    options.push("images");
+  }
+  if (args.format === "text") {
+    options.push("text");
+  }
+  if (args.query && typeof args.query === "string") {
+    options.push(`query: "${args.query.slice(0, 20)}"`);
+  }
+
+  if (options.length > 0) {
+    text += ` ${theme.fg("dim", `[${options.join(", ")}]`)}`;
+  }
+
+  return new Text(truncateToWidth(text, 100), 0, 0);
+}
+
+/**
+ * Render a web extract tool result
+ */
+export function renderExtractResult(
+  result: ToolCallResult,
+  state: { expanded: boolean; isPartial: boolean },
+  theme: Theme
+): Text {
+  const details = result.details as WebExtractDetails | undefined;
+
+  // Show loading state
+  if (state.isPartial) {
+    return new Text(theme.fg("warning", "Extracting..."), 0, 0);
+  }
+
+  // Show error state
+  if (details?.error) {
+    return new Text(theme.fg("error", `Error: ${details.error}`), 0, 0);
+  }
+
+  // Build result display
+  return renderExtractResultCommon(details, state.expanded, theme);
+}
+
+/**
+ * Common result renderer for extract tools
+ */
+function renderExtractResultCommon(
+  details: WebExtractDetails | undefined,
+  expanded: boolean,
+  theme: Theme
+): Text {
+  let text = "";
+
+  if (details) {
+    // Main summary
+    const summary = `${details.successCount}/${details.urlCount} extracted`;
+    text += theme.fg("success", summary);
+
+    // Show failures if any
+    if (details.failureCount > 0) {
+      text += ` ${theme.fg("warning", `(${details.failureCount} failed)`)}`;
+    }
+
+    // Show options
+    const options: string[] = [];
+    if (details.extractDepth === "advanced") {
+      options.push("advanced");
+    }
+    if (details.includeImages) {
+      options.push("images");
+    }
+    if (details.format === "text") {
+      options.push("text");
+    }
+    if (options.length > 0) {
+      text += theme.fg("dim", ` (${options.join(", ")})`);
+    }
+
+    // Show truncation warning
+    if (details.truncation?.truncated) {
+      text += " " + (theme as ExtendedTheme).fg("warning", "(truncated)");
+    }
+
+    // Expanded view: show extracted URLs
+    if (expanded) {
+      // Show successful extractions
+      if (details.results.length > 0) {
+        text += "\n\n";
+        text += (theme as ExtendedTheme).fg("accent", "Extracted:") + "\n";
+
+        const displayResults = details.results.slice(0, 5);
+        for (let i = 0; i < displayResults.length; i++) {
+          const result = displayResults[i]!;
+          text += `\n${(theme as ExtendedTheme).fg("accent", `${i + 1}.`)} ${result.title || "Untitled"}\n`;
+          text += `   ${(theme as ExtendedTheme).fg("dim", result.url)}\n`;
+        }
+
+        if (details.results.length > 5) {
+          text += `\n${(theme as ExtendedTheme).fg("dim", `... ${details.results.length - 5} more`)}`;
+        }
+      }
+
+      // Show failed extractions
+      if (details.failedResults.length > 0) {
+        text += "\n\n";
+        text += (theme as ExtendedTheme).fg("error", "Failed:") + "\n";
+
+        const displayFailed = details.failedResults.slice(0, 3);
+        for (let i = 0; i < displayFailed.length; i++) {
+          const failed = displayFailed[i]!;
+          text += `\n${(theme as ExtendedTheme).fg("error", `${i + 1}.`)} ${failed.url}\n`;
+          text += `   ${(theme as ExtendedTheme).fg("dim", failed.error)}\n`;
+        }
+
+        if (details.failedResults.length > 3) {
+          text += `\n${(theme as ExtendedTheme).fg("dim", `... ${details.failedResults.length - 3} more`)}`;
+        }
+      }
+
+      // Show temp file path if truncated
+      if (details.fullOutputPath) {
+        text += "\n\n";
+        text += (theme as ExtendedTheme).fg("dim", `Full output: ${details.fullOutputPath}`);
+      }
+    }
+  }
+
+  return new Text(text, 0, 0);
 }
 
 /**

@@ -1,10 +1,13 @@
-# Pi Tavily Web Search Extension
+# Pi Tavily Web Search & Extract Extension
 
 [![codecov](https://codecov.io/gh/shaftoe/pi-tavily-tools/graph/badge.svg?token=jFWEnUSop4)](https://codecov.io/gh/shaftoe/pi-tavily-tools)
 
-Add web search capabilities to Pi using the Tavily search API.
+Add web search and content extraction capabilities to [Pi coding agent](https://pi.dev) using the Tavily API.
 
-This extension provides a `web_search` tool that the LLM can use to find current information, recent news, documentation, and time-sensitive data.
+This extension provides two tools:
+
+- `web_search`: Find current information, recent news, documentation, and time-sensitive data
+- `web_extract`: Extract raw content from one or more web pages for detailed analysis
 
 Requires a valid `TAVILY_API_KEY` exported in the enviornment, e.g.
 
@@ -16,12 +19,26 @@ You can get a free one at <https://tavily.com>
 
 ## Features
 
-- **Web Search:** Query the web for real-time information
+### Web Search
+
+- **Real-time Search:** Query the web for current information
 - **AI-Generated Answers:** Get direct answers to questions powered by Tavily
 - **Configurable Depth:** Choose between "basic" and "advanced" search modes
 - **Time Filtering:** Limit results to recent timeframes (e.g., last 7 days)
 - **Image Support:** Include relevant images in search results
-- **Content Extraction:** Optional raw content for deeper analysis
+- **Raw Content:** Optional raw content for deeper analysis
+
+### Web Extract
+
+- **Content Extraction:** Extract full content from one or more URLs
+- **Batch Processing:** Extract from up to 20 URLs in a single request
+- **Configurable Depth:** Choose between "basic" and "advanced" extraction
+- **Multiple Formats:** Output in markdown or plain text
+- **Image Extraction:** Optionally include images from pages
+- **Query Filtering:** Focus extraction on specific content within pages
+
+### Shared Features
+
 - **Proper Truncation:** Output truncated to 50KB / 2000 lines to avoid context overflow
 - **Custom TUI Rendering:** Beautiful display with expandable results
 - **Error Handling:** Graceful failures with helpful error messages
@@ -160,6 +177,94 @@ The `web_search` tool accepts the following parameters:
 { query: "Bun documentation", include_raw_content: true }
 ```
 
+## Web Extract Usage
+
+### Basic Content Extraction
+
+Extract the full content of a specific page:
+
+```
+Extract the content from https://example.com/article
+```
+
+```
+Read the full article at https://docs.example.com/guide
+```
+
+### Batch Extraction
+
+Extract content from multiple URLs at once:
+
+```
+Extract content from these pages:
+- https://wikipedia.org/wiki/Artificial_intelligence
+- https://wikipedia.org/wiki/Machine_learning
+- https://wikipedia.org/wiki/Data_science
+```
+
+### Extract with Images
+
+Include images when extracting content:
+
+```
+Extract the article and images from https://example.com/visual-guide
+```
+
+### Plain Text Format
+
+Get content in plain text instead of markdown:
+
+```
+Extract https://example.com/article as plain text
+```
+
+### Content Filtering
+
+Focus extraction on specific content:
+
+```
+Extract content about "security" from https://example.com/docs
+```
+
+### Advanced Extraction
+
+Use advanced extraction for more comprehensive content:
+
+```
+Extract detailed content from https://example.com/long-article using advanced mode
+```
+
+## Web Extract Parameters
+
+The `web_extract` tool accepts the following parameters:
+
+| Parameter        | Type    | Required | Default    | Description                                    |
+| ---------------- | ------- | -------- | ---------- | ---------------------------------------------- |
+| `urls`           | array   | Yes      | -          | Array of URLs to extract content from (max 20) |
+| `extract_depth`  | string  | No       | "basic"    | Extraction depth: "basic" or "advanced"        |
+| `include_images` | boolean | No       | false      | Include images from pages                      |
+| `format`         | string  | No       | "markdown" | Output format: "markdown" or "text"            |
+| `query`          | string  | No       | -          | Optional query to focus extraction on content  |
+
+### Parameter Examples
+
+```typescript
+// Single URL extraction
+{ urls: ["https://example.com/article"] }
+
+// Multiple URLs
+{ urls: ["https://site1.com", "https://site2.com", "https://site3.com"] }
+
+// Advanced extraction with images
+{ urls: ["https://example.com"], extract_depth: "advanced", include_images: true }
+
+// Plain text format
+{ urls: ["https://example.com"], format: "text" }
+
+// Content filtering
+{ urls: ["https://docs.example.com"], query: "API reference" }
+```
+
 ## Output Truncation
 
 To prevent overwhelming the LLM context, tool output is truncated to:
@@ -172,7 +277,9 @@ Whichever limit is hit first triggers truncation.
 When output is truncated:
 
 - A warning is displayed in the results
-- Full output is saved to a temp file in your project directory: `.pi-tavily-temp/search-{timestamp}.txt`
+- Full output is saved to a temp file in your project directory:
+  - `.pi-tavily-temp/search-{timestamp}.txt` for web_search
+  - `.pi-tavily-temp/extract-{timestamp}.txt` for web_extract
 - The LLM is informed where to find the complete output
 
 ## Troubleshooting
@@ -251,6 +358,37 @@ Error: You have exceeded your monthly request limit
 3. Remove any special characters or complex filters
 4. Try basic search depth instead of advanced
 
+### No Content Extracted
+
+**Symptoms:**
+
+- Extract returns "No content was extracted successfully."
+- All URLs failed
+
+**Solutions:**
+
+1. Check that URLs are accessible (try opening in a browser)
+2. Verify URLs start with `http://` or `https://`
+3. Some websites may block automated extraction
+4. Try with different URLs
+5. Check failed results for specific error messages
+
+### URL Validation Errors
+
+**Error Messages:**
+
+```
+Error: URLs array cannot be empty
+Error: Invalid URL format
+Error: Maximum 20 URLs allowed
+```
+
+**Solutions:**
+
+1. Provide at least one URL in the urls array
+2. Ensure all URLs are valid and start with http:// or https://
+3. Limit to 20 URLs maximum per request
+
 ## Development
 
 ### Project Structure
@@ -276,8 +414,10 @@ pi-tavily-tools/
 │   └── tools/
 │       ├── index.ts      # Tool exports
 │       ├── web-search.ts # Web search tool implementation
+│       ├── web-extract.ts # Web extract tool implementation
 │       ├── tavily/       # Tavily API integration
 │       │   ├── client.ts     # Tavily client & initialization
+│       │   ├── details.ts    # Result details builders
 │       │   ├── formatters.ts # Response formatting
 │       │   ├── renderers.ts  # TUI rendering utilities
 │       │   ├── schemas.ts    # TypeBox parameter schemas
@@ -286,13 +426,17 @@ pi-tavily-tools/
 │           └── truncation.ts # Output truncation utilities
 └── tests/
     ├── integration/      # Integration tests
-    │   └── web-search.test.ts
+    │   ├── web-search.test.ts
+    │   └── web-extract.test.ts
     ├── client.test.ts
     ├── create-error-output.test.ts
+    ├── details.test.ts
     ├── formatters.test.ts
     ├── renderers.test.ts
     ├── schemas.test.ts
-    └── truncation.test.ts
+    ├── truncation.test.ts
+    ├── web-search.test.ts
+    └── web-extract.test.ts
 ```
 
 ### Running Type Checks

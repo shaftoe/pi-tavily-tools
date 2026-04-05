@@ -34,6 +34,32 @@ export const WebSearchParamsSchema = Type.Object({
 });
 
 // ============================================================================
+// Web Extract Schema
+// ============================================================================
+
+export const WebExtractParamsSchema = Type.Object({
+  urls: Type.Array(Type.String({ description: "URL to extract content from" }), {
+    description: "Array of URLs to extract content from (max 20)",
+  }),
+  extract_depth: Type.Optional(
+    StringEnum(["basic", "advanced"] as const, {
+      description: "Extraction depth: 'basic' or 'advanced' (default: 'basic')",
+    })
+  ),
+  include_images: Type.Optional(
+    Type.Boolean({ description: "Include images from pages (default: false)" })
+  ),
+  format: Type.Optional(
+    StringEnum(["markdown", "text"] as const, {
+      description: "Output format: 'markdown' or 'text' (default: 'markdown')",
+    })
+  ),
+  query: Type.Optional(
+    Type.String({ description: "Optional query to focus extraction on specific content" })
+  ),
+});
+
+// ============================================================================
 // Common Schema Parts
 // ============================================================================
 

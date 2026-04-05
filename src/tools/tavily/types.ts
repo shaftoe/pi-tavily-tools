@@ -49,6 +49,45 @@ export interface WebSearchDetails extends SearchResponseDetails {
 }
 
 // ============================================================================
+// Web Extract Specific
+// ============================================================================
+
+export interface WebExtractParams {
+  urls: string[];
+  extract_depth?: "basic" | "advanced";
+  include_images?: boolean;
+  format?: "markdown" | "text";
+  query?: string;
+}
+
+export interface ExtractResult {
+  url: string;
+  title: string | null;
+  rawContent: string;
+  images?: string[];
+}
+
+export interface ExtractFailedResult {
+  url: string;
+  error: string;
+}
+
+export interface WebExtractDetails {
+  urlCount: number;
+  extractDepth: string;
+  includeImages: boolean;
+  format: string;
+  query?: string;
+  successCount: number;
+  failureCount: number;
+  results: ExtractResult[];
+  failedResults: ExtractFailedResult[];
+  truncation?: TruncationResult;
+  fullOutputPath?: string;
+  error?: string;
+}
+
+// ============================================================================
 // Search Source with Content
 // ============================================================================
 

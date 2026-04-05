@@ -9,8 +9,14 @@
  */
 
 import type { TruncationResult } from "@mariozechner/pi-coding-agent";
-import type { TavilySearchOptions } from "@tavily/core";
-import type { SearchResult, WebSearchDetails } from "./types.js";
+import type { TavilyExtractOptions, TavilySearchOptions } from "@tavily/core";
+import type {
+  ExtractFailedResult,
+  ExtractResult,
+  SearchResult,
+  WebExtractDetails,
+  WebSearchDetails,
+} from "./types.js";
 
 // ============================================================================
 // Option normalization
@@ -63,6 +69,51 @@ export function buildSuccessDetails(input: SuccessDetailsInput): WebSearchDetail
       url: r.url,
       score: r.score,
     })),
+    truncation: input.truncation,
+    fullOutputPath: input.fullOutputPath,
+  };
+}
+
+// ============================================================================
+// Extract success details
+// ============================================================================
+
+export interface ExtractSuccessDetailsInput {
+  urlCount: number;
+  options: TavilyExtractOptions;
+  results: ExtractResult[];
+  failedResults: ExtractFailedResult[];
+  truncation?: TruncationResult;
+  fullOutputPath?: string;
+}
+
+/**
+ * Read normalized param defaults from TavilyExtractOptions.
+ */
+function extractOptionDefaults(options: TavilyExtractOptions) {
+  return {
+    extractDepth: String(options.extractDepth ?? "basic"),
+    includeImages: options.includeImages ?? false,
+    format: String(options.format ?? "markdown"),
+  };
+}
+
+/**
+ * Build WebExtractDetails for a successful extract operation.
+ */
+export function buildExtractSuccessDetails(input: ExtractSuccessDetailsInput): WebExtractDetails {
+  const defaults = extractOptionDefaults(input.options);
+
+  return {
+    urlCount: input.urlCount,
+    extractDepth: defaults.extractDepth as "basic" | "advanced",
+    includeImages: defaults.includeImages,
+    format: defaults.format as "markdown" | "text",
+    query: input.options.query,
+    successCount: input.results.length,
+    failureCount: input.failedResults.length,
+    results: input.results,
+    failedResults: input.failedResults,
     truncation: input.truncation,
     fullOutputPath: input.fullOutputPath,
   };

@@ -8,6 +8,7 @@
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { createTavilyClient } from "./tools/tavily/client.js";
+import { registerWebExtractTool } from "./tools/web-extract.js";
 import { registerWebSearchTool } from "./tools/web-search.js";
 
 /**
@@ -27,6 +28,7 @@ export default function (pi: ExtensionAPI): void {
     try {
       const client = createTavilyClient();
       registerWebSearchTool(pi, client);
+      registerWebExtractTool(pi, client);
     } catch (error) {
       if (error instanceof Error) {
         ctx.ui.notify(`[pi-tavily-tools] ${error.message}`, "error");

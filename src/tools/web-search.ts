@@ -14,7 +14,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import type { TavilyClient } from "@tavily/core";
 
-import { applyTruncation } from "./shared/truncation.js";
+import { buildToolResult, sendProgress } from "./shared/execute.js";
 import { buildSearchOptions, validateQuery } from "./tavily/client.js";
 import { buildSuccessDetails } from "./tavily/details.js";
 import { extractSearchResults, formatWebSearchResponse } from "./tavily/formatters.js";
@@ -53,10 +53,7 @@ export function registerWebSearchTool(pi: ExtensionAPI, client: TavilyClient): v
       const query = validateQuery(params.query);
       const searchOptions = buildSearchOptions(params);
 
-      onUpdate?.({
-        content: [{ type: "text", text: `Searching for: ${query}` }],
-        details: {},
-      });
+      sendProgress(onUpdate, `Searching for: ${query}`);
 
       const response = await client.search(query, searchOptions);
       const { answer, results, images } = extractSearchResults(response);
@@ -66,23 +63,16 @@ export function registerWebSearchTool(pi: ExtensionAPI, client: TavilyClient): v
         images,
         searchOptions.includeImages
       );
-      const { content, truncation, fullOutputPath } = await applyTruncation(
-        fullOutput,
-        ctx.cwd,
-        "search"
-      );
-
-      return {
-        content: [{ type: "text", text: content }],
-        details: buildSuccessDetails({
+      return buildToolResult(fullOutput, ctx, "search", (truncation, fullOutputPath) =>
+        buildSuccessDetails({
           query,
           options: searchOptions,
           answer,
           results,
           truncation,
           fullOutputPath,
-        }),
-      };
+        })
+      );
     },
 
     renderCall(args, theme) {

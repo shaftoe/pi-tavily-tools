@@ -4,7 +4,12 @@
  * Creates Tavily client instances with proper initialization.
  */
 
-import { tavily, type TavilyClient, type TavilySearchOptions } from "@tavily/core";
+import {
+  tavily,
+  type TavilyClient,
+  type TavilyExtractOptions,
+  type TavilySearchOptions,
+} from "@tavily/core";
 
 // ============================================================================
 // Client Creation
@@ -69,4 +74,59 @@ export function validateQuery(query: string): string {
     throw new Error("Query cannot be empty");
   }
   return trimmed;
+}
+
+// ============================================================================
+// Extract Helpers
+// ============================================================================
+
+/**
+ * Build Tavily extract options from parameters
+ */
+export function buildExtractOptions(params: Record<string, unknown>): TavilyExtractOptions {
+  return {
+    extractDepth: (params.extract_depth as "basic" | "advanced") ?? "basic",
+    includeImages: params.include_images === true,
+    format: (params.format as "markdown" | "text") ?? "markdown",
+    query: typeof params.query === "string" ? params.query : undefined,
+  };
+}
+
+/**
+ * Validate URLs array
+ * @throws {Error} If URLs array is empty, exceeds max count, or contains invalid URLs
+ */
+export function validateUrls(urls: unknown[]): string[] {
+  if (!Array.isArray(urls)) {
+    throw new Error("URLs must be an array");
+  }
+
+  if (urls.length === 0) {
+    throw new Error("URLs array cannot be empty");
+  }
+
+  if (urls.length > 20) {
+    throw new Error("Maximum 20 URLs allowed, got " + urls.length);
+  }
+
+  const validatedUrls: string[] = [];
+  for (const url of urls) {
+    if (typeof url !== "string") {
+      throw new Error("All URLs must be strings");
+    }
+
+    const trimmed = url.trim();
+    if (!trimmed) {
+      throw new Error("URLs cannot be empty strings");
+    }
+
+    // Basic URL validation - must start with http:// or https://
+    if (!trimmed.match(/^https?:\/\//i)) {
+      throw new Error(`Invalid URL format: ${trimmed}. URLs must start with http:// or https://`);
+    }
+
+    validatedUrls.push(trimmed);
+  }
+
+  return validatedUrls;
 }

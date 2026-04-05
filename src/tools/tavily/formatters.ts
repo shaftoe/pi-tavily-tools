@@ -2,7 +2,13 @@
  * Response formatters for Tavily tools
  */
 
-import type { FormattedOutputParts, ImageResult, SearchResult } from "./types.js";
+import type {
+  ExtractFailedResult,
+  ExtractResult,
+  FormattedOutputParts,
+  ImageResult,
+  SearchResult,
+} from "./types.js";
 
 // ============================================================================
 // Web Search Formatting
@@ -34,11 +40,10 @@ export function formatWebSearchResponse(
         `   Score: ${result.score.toFixed(2)}`
       );
 
-      // Add content/snippet if available
+      // Add full content — truncation is handled downstream by applyTruncation
       const contentToShow = result.rawContent || result.content;
       if (contentToShow) {
-        const snippet = contentToShow.slice(0, 300);
-        parts.push(`   Content: ${snippet}${contentToShow.length > 300 ? "..." : ""}`);
+        parts.push(`   Content: ${contentToShow}`);
       }
     });
   } else {
@@ -83,8 +88,7 @@ export function formatSearchResults(
 
     const contentToShow = result.rawContent || result.content;
     if (contentToShow) {
-      const snippet = contentToShow.slice(0, 300);
-      parts.sources.push(`   Content: ${snippet}${contentToShow.length > 300 ? "..." : ""}`);
+      parts.sources.push(`   Content: ${contentToShow}`);
     }
   });
 
@@ -152,5 +156,109 @@ export function extractSearchResults(response: unknown): {
     answer: resp.answer ?? null,
     results,
     images,
+  };
+}
+
+// ============================================================================
+// Web Extract Formatting
+// ============================================================================
+
+/**
+ * Format Tavily extract response into human-readable text
+ */
+export function formatExtractResponse(
+  results: ExtractResult[],
+  failedResults: ExtractFailedResult[],
+  includeImages: boolean
+): string {
+  const parts: string[] = [];
+
+  // Add successful extractions
+  if (results.length > 0) {
+    parts.push(`Successfully extracted content from ${results.length} URL(s):\n`);
+
+    results.forEach((result, index) => {
+      parts.push(`${index + 1}. ${result.title || "Untitled"}`);
+      parts.push(`   URL: ${result.url}`);
+
+      // Add full content — truncation is handled downstream by applyTruncation
+      parts.push(`   Content: ${result.rawContent}`);
+
+      // Add images if available and requested
+      if (includeImages && result.images && result.images.length > 0) {
+        parts.push(`   Images: ${result.images.length} found`);
+        result.images.slice(0, 3).forEach((img, imgIndex) => {
+          parts.push(`      ${imgIndex + 1}. ${img}`);
+        });
+        if (result.images.length > 3) {
+          parts.push(`      ... ${result.images.length - 3} more`);
+        }
+      }
+
+      parts.push("");
+    });
+  } else {
+    parts.push("No content was extracted successfully.");
+  }
+
+  // Add failed extractions
+  if (failedResults.length > 0) {
+    parts.push(`\nFailed to extract from ${failedResults.length} URL(s):\n`);
+    failedResults.forEach((failed, index) => {
+      parts.push(`${index + 1}. URL: ${failed.url}`);
+      parts.push(`   Error: ${failed.error}`);
+    });
+  }
+
+  return parts.join("\n");
+}
+
+/**
+ * Extract and type-safe Tavily extract response data
+ */
+export function extractExtractResults(response: unknown): {
+  results: ExtractResult[];
+  failedResults: ExtractFailedResult[];
+} {
+  const resp = response as {
+    results?: unknown[];
+    failedResults?: unknown[];
+  };
+
+  // Extract successful results
+  const results: ExtractResult[] = (resp.results || [])
+    .filter((r): r is object => r !== null && typeof r === "object")
+    .map((r) => {
+      const result = r as {
+        url?: unknown;
+        title?: unknown;
+        rawContent?: unknown;
+        images?: unknown[];
+      };
+      return {
+        url: typeof result.url === "string" ? result.url : "",
+        title: typeof result.title === "string" ? result.title : null,
+        rawContent: typeof result.rawContent === "string" ? result.rawContent : "",
+        images:
+          Array.isArray(result.images) && result.images.every((img) => typeof img === "string")
+            ? result.images
+            : undefined,
+      };
+    });
+
+  // Extract failed results
+  const failedResults: ExtractFailedResult[] = (resp.failedResults || [])
+    .filter((f): f is object => f !== null && typeof f === "object")
+    .map((f) => {
+      const failed = f as { url?: unknown; error?: unknown };
+      return {
+        url: typeof failed.url === "string" ? failed.url : "",
+        error: typeof failed.error === "string" ? failed.error : "Unknown error",
+      };
+    });
+
+  return {
+    results,
+    failedResults,
   };
 }
