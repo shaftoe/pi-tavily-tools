@@ -400,39 +400,32 @@ describe("web_search integration tests", () => {
     });
 
     describe("error handling", () => {
-      test("handles empty query gracefully", async () => {
+      test("handles empty query by throwing", async () => {
         const tools = mockAPI.getTools();
         const webSearchTool = tools[0];
         if (!webSearchTool) throw new Error("Tool not registered");
 
-        const result = await webSearchTool.execute(
-          "test-error-1",
-          { query: "   " },
-          undefined,
-          undefined,
-          { cwd: "/tmp" }
-        );
-
-        expect(result.details.error).toBeDefined();
-        expect(result.details.resultCount).toBe(0);
-        expect(result.details.sources).toEqual([]);
+        expect(
+          webSearchTool.execute("test-error-1", { query: "   " }, undefined, undefined, {
+            cwd: "/tmp",
+          })
+        ).rejects.toThrow("Query cannot be empty");
       });
 
-      test("handles invalid search depth gracefully", async () => {
+      test("handles invalid search depth by throwing", async () => {
         const tools = mockAPI.getTools();
         const webSearchTool = tools[0];
         if (!webSearchTool) throw new Error("Tool not registered");
 
-        const result = await webSearchTool.execute(
-          "test-error-2",
-          { query: "test", search_depth: "invalid" as unknown as "basic" },
-          undefined,
-          undefined,
-          { cwd: "/tmp" }
-        );
-
-        // Should not throw - search depth is passed through to Tavily
-        expect(result).toBeDefined();
+        expect(
+          webSearchTool.execute(
+            "test-error-2",
+            { query: "test", search_depth: "invalid" as unknown as "basic" },
+            undefined,
+            undefined,
+            { cwd: "/tmp" }
+          )
+        ).rejects.toThrow("Invalid search depth");
       });
     });
   });

@@ -5,6 +5,7 @@
 import { describe, expect, test } from "bun:test";
 import {
   buildSearchOptions,
+  createSearchFunction,
   createTavilyClient,
   validateQuery,
 } from "../src/tools/tavily/client.js";
@@ -250,5 +251,23 @@ describe("createTavilyClient", () => {
     // This test would require mocking the tavily SDK
     // For now, we just verify the function exists
     expect(() => createTavilyClient("test-key")).not.toThrow();
+  });
+});
+
+describe("createSearchFunction", () => {
+  test("returns a function bound to the client", async () => {
+    let called = false;
+    const mockClient = {
+      search: async () => {
+        called = true;
+        return { answer: null, results: [], images: [] };
+      },
+    } as unknown as import("@tavily/core").TavilyClient;
+
+    const searchFn = createSearchFunction(mockClient);
+    expect(typeof searchFn).toBe("function");
+
+    await searchFn("test query", {});
+    expect(called).toBe(true);
   });
 });

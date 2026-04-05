@@ -13,10 +13,10 @@
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import type { TavilyClient } from "@tavily/core";
-import type { WebSearchDetails } from "./tavily/types.js";
 
-import { applyTruncation, createErrorOutput } from "./shared/truncation.js";
+import { applyTruncation } from "./shared/truncation.js";
 import { buildSearchOptions, validateQuery } from "./tavily/client.js";
+import { buildSuccessDetails } from "./tavily/details.js";
 import { extractSearchResults, formatWebSearchResponse } from "./tavily/formatters.js";
 import { renderWebSearchCall, renderWebSearchResult } from "./tavily/renderers.js";
 import { WebSearchParamsSchema } from "./tavily/schemas.js";
@@ -48,94 +48,41 @@ export function registerWebSearchTool(pi: ExtensionAPI, client: TavilyClient): v
 
     parameters: WebSearchParamsSchema,
 
+    // Pi catches thrown errors and reports them to the LLM with isError: true
     async execute(_toolCallId, params, _signal, onUpdate, ctx) {
-      try {
-        // Validate and normalize parameters
-        const query = validateQuery(params.query);
-        const searchOptions = buildSearchOptions(params);
+      const query = validateQuery(params.query);
+      const searchOptions = buildSearchOptions(params);
 
-        // Notify user we're searching
-        onUpdate?.({
-          content: [{ type: "text", text: `Searching for: ${query}` }],
-          details: {},
-        });
+      onUpdate?.({
+        content: [{ type: "text", text: `Searching for: ${query}` }],
+        details: {},
+      });
 
-        // Perform search using the provided client
-        const response = await client.search(query, searchOptions);
+      const response = await client.search(query, searchOptions);
+      const { answer, results, images } = extractSearchResults(response);
+      const fullOutput = formatWebSearchResponse(
+        answer,
+        results,
+        images,
+        searchOptions.includeImages
+      );
+      const { content, truncation, fullOutputPath } = await applyTruncation(
+        fullOutput,
+        ctx.cwd,
+        "search"
+      );
 
-        // Extract and format search results
-        const { answer, results, images } = extractSearchResults(response);
-        const fullOutput = formatWebSearchResponse(
+      return {
+        content: [{ type: "text", text: content }],
+        details: buildSuccessDetails({
+          query,
+          options: searchOptions,
           answer,
           results,
-          images,
-          searchOptions.includeImages
-        );
-
-        // Apply truncation
-        const { content, truncation, fullOutputPath } = await applyTruncation(
-          fullOutput,
-          ctx.cwd,
-          "search"
-        );
-
-        // Build details with proper defaults
-        const maxResults = searchOptions.maxResults ?? 5;
-        const searchDepth = String(searchOptions.searchDepth ?? "basic");
-        const includeImages = searchOptions.includeImages ?? false;
-        const days = searchOptions.days;
-
-        const details: WebSearchDetails = {
-          query,
-          maxResults,
-          searchDepth,
-          includeAnswer: searchOptions.includeAnswer !== false,
-          includeRawContent: typeof searchOptions.includeRawContent === "string",
-          includeImages,
-          days,
-          answer: answer ?? undefined,
-          resultCount: results.length,
-          sources: results.map((r) => ({
-            title: r.title,
-            url: r.url,
-            score: r.score,
-          })),
           truncation,
           fullOutputPath,
-        };
-
-        return {
-          content: [{ type: "text", text: content }],
-          details,
-        };
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        const errorOutput = createErrorOutput(errorMessage, {
-          query: params.query,
-          maxResults: params.max_results ?? 5,
-          searchDepth: params.search_depth ?? "basic",
-          includeAnswer: params.include_answer ?? true,
-          includeRawContent: params.include_raw_content ?? false,
-          includeImages: params.include_images ?? false,
-          days: params.days,
-        });
-
-        return {
-          content: [{ type: "text", text: errorOutput.content }],
-          details: {
-            query: params.query,
-            maxResults: params.max_results ?? 5,
-            searchDepth: params.search_depth ?? "basic",
-            includeAnswer: params.include_answer ?? true,
-            includeRawContent: params.include_raw_content ?? false,
-            includeImages: params.include_images ?? false,
-            days: params.days,
-            resultCount: 0,
-            sources: [],
-            error: errorMessage,
-          } as WebSearchDetails,
-        };
-      }
+        }),
+      };
     },
 
     renderCall(args, theme) {

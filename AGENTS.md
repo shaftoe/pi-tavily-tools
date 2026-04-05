@@ -2,6 +2,10 @@
 
 Refer to official Tavily SDK reference at <https://docs.tavily.com/sdk/javascript/reference>
 
+## Style
+
+- don't add unnecessary inline comments, prefer function documentation
+
 ## Package Management
 
 - **Package Manager:** Use [Bun](https://bun.sh) for all package management operations
@@ -17,33 +21,6 @@ Refer to official Tavily SDK reference at <https://docs.tavily.com/sdk/javascrip
 - **Version:** TypeScript >= 6.0.0 (use latest stable version)
 - **Strict Mode:** Enable all strict compiler options
 - **Module System:** ESM (`"module": "ES2022"`, `"type": "module"` in package.json)
-
-### Compiler Options (tsconfig.json)
-
-```json
-{
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "ES2022",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "noImplicitOverride": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.test.ts", "**/*.spec.ts"]
-}
-```
 
 ## Linting and Type Checking
 

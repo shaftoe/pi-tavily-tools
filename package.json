@@ -44,14 +44,15 @@
     "url": "https://github.com/shaftoe/pi-tavily-tools"
   },
   "scripts": {
-    "build": "bun run check && tsc",
-    "check": "tsc --noEmit --project tsconfig.test.json",
+    "build": "bun run check && tsc --project tsconfig.build.json",
+    "check": "tsc --noEmit",
     "check:watch": "tsc --noEmit --watch",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "test": "bun test",
+    "test:coverage": "bun test --coverage --coverage-reporter=lcov",
     "test:watch": "bun test --watch",
     "release": "bun run build && npm publish --access public",
     "release:dry-run": "bun run build && npm publish --dry-run"

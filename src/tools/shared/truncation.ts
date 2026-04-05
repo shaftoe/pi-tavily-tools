@@ -68,21 +68,3 @@ export async function applyTruncation(
 
   return { content };
 }
-
-/**
- * Create error output
- */
-export function createErrorOutput(
-  errorMessage: string,
-  baseDetails: Record<string, unknown>
-): { content: string; details: Record<string, unknown> } {
-  return {
-    content: `Error: ${errorMessage}`,
-    details: {
-      ...baseDetails,
-      resultCount: 0,
-      sources: [],
-      error: errorMessage,
-    },
-  };
-}
