@@ -1,5 +1,7 @@
 # Pi Tavily Web Search Extension
 
+[![codecov](https://codecov.io/gh/shaftoe/pi-tavily-tools/graph/badge.svg?token=jFWEnUSop4)](https://codecov.io/gh/shaftoe/pi-tavily-tools)
+
 Add web search capabilities to Pi using the Tavily search API.
 
 This extension provides a `web_search` tool that the LLM can use to find current information, recent news, documentation, and time-sensitive data.
