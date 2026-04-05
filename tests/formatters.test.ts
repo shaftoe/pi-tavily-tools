@@ -4,7 +4,9 @@
 
 import { describe, expect, test } from "bun:test";
 import {
+  extractExtractResults,
   extractSearchResults,
+  formatExtractResponse,
   formatSearchResults,
   formatWebSearchResponse,
 } from "../src/tools/tavily/formatters.js";
@@ -294,5 +296,332 @@ describe("extractSearchResults", () => {
 
     expect(typeof extracted.results[0]?.score).toBe("number");
     expect(extracted.results[0]?.score).toBe(0.95);
+  });
+});
+
+// ============================================================================
+// Extract formatters
+// ============================================================================
+
+describe("formatExtractResponse", () => {
+  test("formats successful extraction with multiple results", () => {
+    const results = [
+      {
+        url: "https://example.com/1",
+        title: "First Page",
+        rawContent: "Content from first page",
+      },
+      {
+        url: "https://example.com/2",
+        title: "Second Page",
+        rawContent: "Content from second page",
+      },
+    ];
+
+    const output = formatExtractResponse(results, [], false);
+
+    expect(output).toContain("Successfully extracted content from 2 URL(s)");
+    expect(output).toContain("1. First Page");
+    expect(output).toContain("URL: https://example.com/1");
+    expect(output).toContain("Content: Content from first page");
+    expect(output).toContain("2. Second Page");
+    expect(output).toContain("URL: https://example.com/2");
+    expect(output).toContain("Content: Content from second page");
+  });
+
+  test("handles empty results with no content message", () => {
+    const output = formatExtractResponse([], [], false);
+    expect(output).toContain("No content was extracted successfully.");
+  });
+
+  test("includes images when includeImages is true", () => {
+    const results = [
+      {
+        url: "https://example.com",
+        title: "Page with Images",
+        rawContent: "Content",
+        images: ["https://example.com/img1.jpg", "https://example.com/img2.jpg"],
+      },
+    ];
+
+    const output = formatExtractResponse(results, [], true);
+
+    expect(output).toContain("Images: 2 found");
+    expect(output).toContain("1. https://example.com/img1.jpg");
+    expect(output).toContain("2. https://example.com/img2.jpg");
+  });
+
+  test("limits displayed images to 3 with more message", () => {
+    const results = [
+      {
+        url: "https://example.com",
+        title: "Many Images",
+        rawContent: "Content",
+        images: [
+          "https://example.com/img1.jpg",
+          "https://example.com/img2.jpg",
+          "https://example.com/img3.jpg",
+          "https://example.com/img4.jpg",
+          "https://example.com/img5.jpg",
+        ],
+      },
+    ];
+
+    const output = formatExtractResponse(results, [], true);
+
+    expect(output).toContain("1. https://example.com/img1.jpg");
+    expect(output).toContain("3. https://example.com/img3.jpg");
+    expect(output).toContain("... 2 more");
+    expect(output).not.toContain("4. https://example.com/img4.jpg");
+  });
+
+  test("excludes images when includeImages is false", () => {
+    const results = [
+      {
+        url: "https://example.com",
+        title: "Page",
+        rawContent: "Content",
+        images: ["https://example.com/img1.jpg"],
+      },
+    ];
+
+    const output = formatExtractResponse(results, [], false);
+
+    expect(output).not.toContain("Images:");
+    expect(output).not.toContain("https://example.com/img1.jpg");
+  });
+
+  test("includes failed extractions", () => {
+    const failedResults = [
+      { url: "https://failed1.com", error: "Connection timeout" },
+      { url: "https://failed2.com", error: "404 Not Found" },
+    ];
+
+    const output = formatExtractResponse([], failedResults, false);
+
+    expect(output).toContain("Failed to extract from 2 URL(s)");
+    expect(output).toContain("1. URL: https://failed1.com");
+    expect(output).toContain("Error: Connection timeout");
+    expect(output).toContain("2. URL: https://failed2.com");
+    expect(output).toContain("Error: 404 Not Found");
+  });
+
+  test("combines successful and failed extractions", () => {
+    const results = [
+      {
+        url: "https://success.com",
+        title: "Success",
+        rawContent: "Content",
+      },
+    ];
+    const failedResults = [{ url: "https://failed.com", error: "Error" }];
+
+    const output = formatExtractResponse(results, failedResults, false);
+
+    expect(output).toContain("Successfully extracted content from 1 URL(s)");
+    expect(output).toContain("Failed to extract from 1 URL(s)");
+    expect(output).toContain("1. Success");
+    expect(output).toContain("1. URL: https://failed.com");
+  });
+
+  test("handles null title gracefully", () => {
+    const results = [
+      {
+        url: "https://example.com",
+        title: null,
+        rawContent: "Content",
+      },
+    ];
+
+    const output = formatExtractResponse(results, [], false);
+
+    expect(output).toContain("1. Untitled");
+  });
+});
+
+describe("extractExtractResults", () => {
+  test("extracts successful results array", () => {
+    const response = {
+      results: [
+        {
+          url: "https://example.com/1",
+          title: "First",
+          rawContent: "Content 1",
+        },
+        {
+          url: "https://example.com/2",
+          title: "Second",
+          rawContent: "Content 2",
+        },
+      ],
+    };
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.results).toHaveLength(2);
+    expect(extracted.results[0]?.url).toBe("https://example.com/1");
+    expect(extracted.results[0]?.title).toBe("First");
+    expect(extracted.results[0]?.rawContent).toBe("Content 1");
+    expect(extracted.results[1]?.url).toBe("https://example.com/2");
+  });
+
+  test("handles missing result properties with defaults", () => {
+    const response = {
+      results: [{}],
+    };
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.results[0]?.url).toBe("");
+    expect(extracted.results[0]?.title).toBe(null);
+    expect(extracted.results[0]?.rawContent).toBe("");
+  });
+
+  test("filters out null and undefined results", () => {
+    const response = {
+      results: [
+        { url: "https://example.com", title: "Valid", rawContent: "Content" },
+        null,
+        undefined,
+      ],
+    };
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.results).toHaveLength(1);
+    expect(extracted.results[0]?.url).toBe("https://example.com");
+  });
+
+  test("filters out non-object results", () => {
+    const response = {
+      results: [
+        { url: "https://example.com", title: "Valid", rawContent: "Content" },
+        "invalid string",
+        123,
+        null,
+      ],
+    };
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.results).toHaveLength(1);
+  });
+
+  test("extracts failed results array", () => {
+    const response = {
+      failedResults: [
+        { url: "https://failed1.com", error: "Error 1" },
+        { url: "https://failed2.com", error: "Error 2" },
+      ],
+    };
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.failedResults).toHaveLength(2);
+    expect(extracted.failedResults[0]?.url).toBe("https://failed1.com");
+    expect(extracted.failedResults[0]?.error).toBe("Error 1");
+    expect(extracted.failedResults[1]?.url).toBe("https://failed2.com");
+    expect(extracted.failedResults[1]?.error).toBe("Error 2");
+  });
+
+  test("handles missing failed result properties with defaults", () => {
+    const response = {
+      failedResults: [{}],
+    };
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.failedResults[0]?.url).toBe("");
+    expect(extracted.failedResults[0]?.error).toBe("Unknown error");
+  });
+
+  test("filters out null and undefined failed results", () => {
+    const response = {
+      failedResults: [
+        { url: "https://failed.com", error: "Error" },
+        null,
+        undefined,
+      ],
+    };
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.failedResults).toHaveLength(1);
+  });
+
+  test("filters out non-object failed results", () => {
+    const response = {
+      failedResults: [
+        { url: "https://failed.com", error: "Error" },
+        "invalid",
+        123,
+      ],
+    };
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.failedResults).toHaveLength(1);
+  });
+
+  test("includes images array when valid", () => {
+    const response = {
+      results: [
+        {
+          url: "https://example.com",
+          title: "Page",
+          rawContent: "Content",
+          images: ["https://example.com/img1.jpg", "https://example.com/img2.jpg"],
+        },
+      ],
+    };
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.results[0]?.images).toEqual([
+      "https://example.com/img1.jpg",
+      "https://example.com/img2.jpg",
+    ]);
+  });
+
+  test("sets images to undefined when not an array of strings", () => {
+    const response = {
+      results: [
+        {
+          url: "https://example.com",
+          title: "Page",
+          rawContent: "Content",
+          images: ["valid", 123, null],
+        },
+      ],
+    };
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.results[0]?.images).toBeUndefined();
+  });
+
+  test("sets images to undefined when missing", () => {
+    const response = {
+      results: [
+        {
+          url: "https://example.com",
+          title: "Page",
+          rawContent: "Content",
+        },
+      ],
+    };
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.results[0]?.images).toBeUndefined();
+  });
+
+  test("handles empty arrays for results and failedResults", () => {
+    const response = {};
+
+    const extracted = extractExtractResults(response);
+
+    expect(extracted.results).toEqual([]);
+    expect(extracted.failedResults).toEqual([]);
   });
 });

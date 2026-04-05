@@ -3,10 +3,10 @@
  */
 
 import type { TruncationResult } from "@mariozechner/pi-coding-agent";
-import type { TavilySearchOptions } from "@tavily/core";
+import type { TavilyExtractOptions, TavilySearchOptions } from "@tavily/core";
 import { describe, expect, test } from "bun:test";
-import { buildSuccessDetails } from "../src/tools/tavily/details.js";
-import type { SearchResult } from "../src/tools/tavily/types.js";
+import { buildExtractSuccessDetails, buildSuccessDetails } from "../src/tools/tavily/details.js";
+import type { ExtractFailedResult, ExtractResult, SearchResult } from "../src/tools/tavily/types.js";
 
 // ============================================================================
 // Helpers
@@ -191,5 +191,195 @@ describe("buildSuccessDetails", () => {
       url: "https://c.com",
       score: 0.9,
     });
+  });
+});
+
+// ============================================================================
+// buildExtractSuccessDetails tests
+// ============================================================================
+
+describe("buildExtractSuccessDetails", () => {
+  function makeExtractResults(overrides: Partial<ExtractResult>[] = []): ExtractResult[] {
+    return overrides.map((r, i) => ({
+      url: r.url ?? `https://example.com/${i + 1}`,
+      title: r.title ?? `Extract ${i + 1}`,
+      rawContent: r.rawContent ?? "Sample content",
+      images: r.images,
+      ...r,
+    }));
+  }
+
+  function makeFailedResults(overrides: Partial<ExtractFailedResult>[] = []): ExtractFailedResult[] {
+    return overrides.map((f, i) => ({
+      url: f.url ?? `https://failed-${i + 1}.com`,
+      error: f.error ?? "Extraction failed",
+      ...f,
+    }));
+  }
+
+  function defaultExtractOptions(): TavilyExtractOptions {
+    return {
+      extractDepth: "basic",
+      includeImages: false,
+      format: "markdown",
+      urls: ["https://example.com"],
+    };
+  }
+
+  function makeExtractInput(overrides: Record<string, unknown> = {}) {
+    return {
+      urlCount: 1,
+      options: defaultExtractOptions(),
+      results: [] as ExtractResult[],
+      failedResults: [] as ExtractFailedResult[],
+      ...overrides,
+    };
+  }
+
+  // Extract option defaults
+  test("uses default extractDepth 'basic' when undefined", () => {
+    const details = buildExtractSuccessDetails(
+      makeExtractInput({ options: { ...defaultExtractOptions(), extractDepth: undefined } })
+    );
+    expect(details.extractDepth).toBe("basic");
+  });
+
+  test("uses provided extractDepth 'advanced'", () => {
+    const details = buildExtractSuccessDetails(
+      makeExtractInput({ options: { ...defaultExtractOptions(), extractDepth: "advanced" } })
+    );
+    expect(details.extractDepth).toBe("advanced");
+  });
+
+  test("includesImages defaults to false when undefined", () => {
+    const details = buildExtractSuccessDetails(
+      makeExtractInput({ options: { ...defaultExtractOptions(), includeImages: undefined } })
+    );
+    expect(details.includeImages).toBe(false);
+  });
+
+  test("uses provided includeImages true", () => {
+    const details = buildExtractSuccessDetails(
+      makeExtractInput({ options: { ...defaultExtractOptions(), includeImages: true } })
+    );
+    expect(details.includeImages).toBe(true);
+  });
+
+  test("format defaults to 'markdown' when undefined", () => {
+    const details = buildExtractSuccessDetails(
+      makeExtractInput({ options: { ...defaultExtractOptions(), format: undefined } })
+    );
+    expect(details.format).toBe("markdown");
+  });
+
+  test("uses provided format 'text'", () => {
+    const details = buildExtractSuccessDetails(
+      makeExtractInput({ options: { ...defaultExtractOptions(), format: "text" } })
+    );
+    expect(details.format).toBe("text");
+  });
+
+  // Success/failure count mapping
+  test("maps success count from results array length", () => {
+    const results = makeExtractResults([
+      { url: "https://a.com" },
+      { url: "https://b.com" },
+      { url: "https://c.com" },
+    ]);
+    const details = buildExtractSuccessDetails(makeExtractInput({ results }));
+    expect(details.successCount).toBe(3);
+  });
+
+  test("maps failure count from failedResults array length", () => {
+    const failedResults = makeFailedResults([
+      { url: "https://fail1.com", error: "Error 1" },
+      { url: "https://fail2.com", error: "Error 2" },
+    ]);
+    const details = buildExtractSuccessDetails(makeExtractInput({ failedResults }));
+    expect(details.failureCount).toBe(2);
+  });
+
+  test("handles zero success and failure counts", () => {
+    const details = buildExtractSuccessDetails(makeExtractInput());
+    expect(details.successCount).toBe(0);
+    expect(details.failureCount).toBe(0);
+  });
+
+  // Truncation and fullOutputPath handling
+  test("passes through truncation metadata", () => {
+    const truncation = {
+      content: "truncated",
+      truncated: true,
+      truncatedBy: "lines" as const,
+      outputLines: 10,
+      totalLines: 100,
+      outputBytes: 500,
+      totalBytes: 5000,
+      maxLines: 2000,
+      maxBytes: 51200,
+      lastLinePartial: false,
+      firstLineExceedsLimit: false,
+    } satisfies TruncationResult;
+    const details = buildExtractSuccessDetails(makeExtractInput({ truncation }));
+    expect(details.truncation).toBe(truncation);
+  });
+
+  test("passes through fullOutputPath", () => {
+    const details = buildExtractSuccessDetails(
+      makeExtractInput({ fullOutputPath: "/tmp/extract-123.txt" })
+    );
+    expect(details.fullOutputPath).toBe("/tmp/extract-123.txt");
+  });
+
+  // Query parameter handling
+  test("includes query from options when provided", () => {
+    const details = buildExtractSuccessDetails(
+      makeExtractInput({ options: { ...defaultExtractOptions(), query: "search terms" } })
+    );
+    expect(details.query).toBe("search terms");
+  });
+
+  test("handles missing query as undefined", () => {
+    const details = buildExtractSuccessDetails(
+      makeExtractInput({ options: { ...defaultExtractOptions(), query: undefined } })
+    );
+    expect(details.query).toBeUndefined();
+  });
+
+  // Other fields
+  test("includes urlCount from input", () => {
+    const details = buildExtractSuccessDetails(makeExtractInput({ urlCount: 5 }));
+    expect(details.urlCount).toBe(5);
+  });
+
+  test("includes results array from input", () => {
+    const results = makeExtractResults([
+      { url: "https://a.com", rawContent: "Content A" },
+      { url: "https://b.com", rawContent: "Content B" },
+    ]);
+    const details = buildExtractSuccessDetails(makeExtractInput({ results }));
+    expect(details.results).toEqual(results);
+  });
+
+  test("includes failedResults array from input", () => {
+    const failedResults = makeFailedResults([
+      { url: "https://fail1.com", error: "Error 1" },
+      { url: "https://fail2.com", error: "Error 2" },
+    ]);
+    const details = buildExtractSuccessDetails(makeExtractInput({ failedResults }));
+    expect(details.failedResults).toEqual(failedResults);
+  });
+
+  // Empty arrays and edge cases
+  test("handles empty results array", () => {
+    const details = buildExtractSuccessDetails(makeExtractInput({ results: [] }));
+    expect(details.results).toEqual([]);
+    expect(details.successCount).toBe(0);
+  });
+
+  test("handles empty failedResults array", () => {
+    const details = buildExtractSuccessDetails(makeExtractInput({ failedResults: [] }));
+    expect(details.failedResults).toEqual([]);
+    expect(details.failureCount).toBe(0);
   });
 });
