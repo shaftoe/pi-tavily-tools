@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- fixed wrong calculation for status, now also includes paygo data
 - bump Pi deps to latest
 
 ## [0.3.0] - 2026-04-05
