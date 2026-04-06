@@ -41,6 +41,8 @@ describe("TavilyUsageCache", () => {
         percentage: 3.3,
         planUsage: 500,
         planLimit: 15000,
+        paygoUsage: 0,
+        paygoLimit: 0,
         keyUsage: 150,
         keyLimit: 1000,
       });
@@ -57,6 +59,8 @@ describe("TavilyUsageCache", () => {
         percentage: 0,
         planUsage: 0,
         planLimit: 15000,
+        paygoUsage: 0,
+        paygoLimit: 0,
         keyUsage: 0,
         keyLimit: 1000,
       });
@@ -73,6 +77,8 @@ describe("TavilyUsageCache", () => {
         percentage: 100,
         planUsage: 15000,
         planLimit: 15000,
+        paygoUsage: 100,
+        paygoLimit: 100,
         keyUsage: 1000,
         keyLimit: 1000,
       });
@@ -89,6 +95,8 @@ describe("TavilyUsageCache", () => {
         percentage: 42.567,
         planUsage: 425,
         planLimit: 1000,
+        paygoUsage: 0,
+        paygoLimit: 0,
         keyUsage: 10,
         keyLimit: 100,
       });
@@ -120,6 +128,8 @@ describe("TavilyUsageCache", () => {
         percentage: 3.3,
         planUsage: 500,
         planLimit: 15000,
+        paygoUsage: 0,
+        paygoLimit: 0,
         keyUsage: 150,
         keyLimit: 1000,
       });
@@ -148,6 +158,8 @@ describe("TavilyUsageCache", () => {
         percentage: 30,
         planUsage: 300,
         planLimit: 1000,
+        paygoUsage: 0,
+        paygoLimit: 0,
         keyUsage: 10,
         keyLimit: 100,
       });
@@ -172,6 +184,8 @@ describe("TavilyUsageCache", () => {
         percentage: 50,
         planUsage: 500,
         planLimit: 1000,
+        paygoUsage: 0,
+        paygoLimit: 0,
         keyUsage: 10,
         keyLimit: 100,
       });
@@ -237,6 +251,27 @@ describe("TavilyUsageCache", () => {
       } finally {
         console.error = originalConsoleError;
       }
+    });
+  });
+
+  describe("PAYGO scenarios", () => {
+    test("should show reasonable percentage when plan exceeded but PAYGO covers it", async () => {
+      const mockCtx = createMockContext();
+      // plan_usage=1018, plan_limit=1000, paygo_limit=5000 → 1018/6000 = 16.97%
+      const mockFetch = createMockFetchUsage({
+        percentage: 16.97,
+        planUsage: 1018,
+        planLimit: 1000,
+        paygoUsage: 0,
+        paygoLimit: 5000,
+        keyUsage: 1018,
+        keyLimit: 6000,
+      });
+      const cache = new TavilyUsageCache("test-api-key");
+
+      await cache.updateStatus(mockCtx, mockFetch);
+
+      expect(mockCtx.ui.setStatus).toHaveBeenCalledWith("tavily-usage", "muted:Tavily:accent:17%");
     });
   });
 });

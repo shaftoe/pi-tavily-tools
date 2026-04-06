@@ -40,12 +40,16 @@ export interface TavilyUsageResponse {
 }
 
 export interface TavilyUsageData {
-  /** Plan usage as percentage of plan limit (0–100) */
+  /** Total usage as percentage of combined plan + PAYGO limit (0–100+) */
   percentage: number;
-  /** Total plan credits used */
+  /** Plan credits used */
   planUsage: number;
-  /** Total plan credits available */
+  /** Plan credits available */
   planLimit: number;
+  /** Pay-as-you-go credits used */
+  paygoUsage: number;
+  /** Pay-as-you-go credits available */
+  paygoLimit: number;
   /** Per-API key usage */
   keyUsage: number;
   /** Per-API key limit */
@@ -87,13 +91,16 @@ export async function getTavilyUsage(apiKey: string): Promise<TavilyUsageData> {
     throw new Error("Unexpected Tavily usage API response: missing account plan limit");
   }
 
-  const planLimit = data.account.plan_limit || 1; // avoid division by zero
-  const percentage = (data.account.plan_usage / planLimit) * 100;
+  const totalUsage = data.account.plan_usage + (data.account.paygo_usage ?? 0);
+  const totalLimit = data.account.plan_limit + (data.account.paygo_limit ?? 0);
+  const percentage = (totalUsage / (totalLimit || 1)) * 100;
 
   return {
     percentage,
     planUsage: data.account.plan_usage,
     planLimit: data.account.plan_limit,
+    paygoUsage: data.account.paygo_usage ?? 0,
+    paygoLimit: data.account.paygo_limit ?? 0,
     keyUsage: data.key?.usage ?? 0,
     keyLimit: data.key?.limit ?? 0,
   };

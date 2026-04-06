@@ -109,9 +109,12 @@ describe("getTavilyUsage", () => {
   test("should return correct usage data from a valid response", async () => {
     const result = await getTavilyUsage("test-key");
 
-    expect(result.percentage).toBeCloseTo(3.333, 2);
+    // (500 + 25) / (15000 + 100) * 100 = 3.477...
+    expect(result.percentage).toBeCloseTo(3.477, 2);
     expect(result.planUsage).toBe(500);
     expect(result.planLimit).toBe(15000);
+    expect(result.paygoUsage).toBe(25);
+    expect(result.paygoLimit).toBe(100);
     expect(result.keyUsage).toBe(150);
     expect(result.keyLimit).toBe(1000);
   });
@@ -119,6 +122,7 @@ describe("getTavilyUsage", () => {
   test("should handle 0% usage", async () => {
     const response = structuredClone(mockUsageResponse);
     response.account.plan_usage = 0;
+    response.account.paygo_usage = 0;
 
     mockFetch.mockImplementationOnce(() =>
       Promise.resolve({ ok: true, json: async () => response } as Response)
@@ -130,9 +134,10 @@ describe("getTavilyUsage", () => {
     expect(result.planUsage).toBe(0);
   });
 
-  test("should handle 100% usage", async () => {
+  test("should handle 100% usage (plan and PAYGO both maxed)", async () => {
     const response = structuredClone(mockUsageResponse);
     response.account.plan_usage = response.account.plan_limit;
+    response.account.paygo_usage = response.account.paygo_limit;
 
     mockFetch.mockImplementationOnce(() =>
       Promise.resolve({ ok: true, json: async () => response } as Response)
@@ -147,6 +152,8 @@ describe("getTavilyUsage", () => {
     const response = structuredClone(mockUsageResponse);
     response.account.plan_limit = 0;
     response.account.plan_usage = 50;
+    response.account.paygo_usage = 0;
+    response.account.paygo_limit = 0;
 
     mockFetch.mockImplementationOnce(() =>
       Promise.resolve({ ok: true, json: async () => response } as Response)
@@ -154,7 +161,7 @@ describe("getTavilyUsage", () => {
 
     const result = await getTavilyUsage("test-key");
 
-    // (50 / 1) * 100 = 5000 — falls back to limit of 1
+    // (50 + 0) / (0 + 0 || 1) * 100 = 5000 — falls back to limit of 1
     expect(result.percentage).toBe(5000);
   });
 
@@ -195,5 +202,89 @@ describe("getTavilyUsage", () => {
     expect(result.keyUsage).toBe(0);
     expect(result.keyLimit).toBe(0);
     expect(result.percentage).toBe(10);
+  });
+
+  test("should calculate percentage correctly for free-tier-only user (no PAYGO)", async () => {
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => ({
+          account: {
+            plan_usage: 500,
+            plan_limit: 1000,
+            paygo_usage: 0,
+            paygo_limit: 0,
+          },
+        }),
+      } as Response)
+    );
+
+    const result = await getTavilyUsage("test-key");
+
+    expect(result.percentage).toBe(50);
+    expect(result.paygoUsage).toBe(0);
+    expect(result.paygoLimit).toBe(0);
+  });
+
+  test("should calculate percentage correctly when plan exceeded but PAYGO covers it", async () => {
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => ({
+          account: {
+            plan_usage: 1018,
+            plan_limit: 1000,
+            paygo_usage: 0,
+            paygo_limit: 5000,
+          },
+        }),
+      } as Response)
+    );
+
+    const result = await getTavilyUsage("test-key");
+
+    // (1018 + 0) / (1000 + 5000) * 100 = 16.97%
+    expect(result.percentage).toBeCloseTo(16.97, 1);
+  });
+
+  test("should default paygo fields to 0 when missing from response", async () => {
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => ({
+          account: {
+            plan_usage: 200,
+            plan_limit: 1000,
+          },
+        }),
+      } as Response)
+    );
+
+    const result = await getTavilyUsage("test-key");
+
+    expect(result.paygoUsage).toBe(0);
+    expect(result.paygoLimit).toBe(0);
+    expect(result.percentage).toBe(20);
+  });
+
+  test("should handle PAYGO-only usage with exhausted plan", async () => {
+    mockFetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: async () => ({
+          account: {
+            plan_usage: 1000,
+            plan_limit: 1000,
+            paygo_usage: 250,
+            paygo_limit: 1000,
+          },
+        }),
+      } as Response)
+    );
+
+    const result = await getTavilyUsage("test-key");
+
+    // (1000 + 250) / (1000 + 1000) * 100 = 62.5%
+    expect(result.percentage).toBe(62.5);
   });
 });
