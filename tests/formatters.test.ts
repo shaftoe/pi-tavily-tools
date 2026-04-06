@@ -537,11 +537,7 @@ describe("extractExtractResults", () => {
 
   test("filters out null and undefined failed results", () => {
     const response = {
-      failedResults: [
-        { url: "https://failed.com", error: "Error" },
-        null,
-        undefined,
-      ],
+      failedResults: [{ url: "https://failed.com", error: "Error" }, null, undefined],
     };
 
     const extracted = extractExtractResults(response);
@@ -551,11 +547,7 @@ describe("extractExtractResults", () => {
 
   test("filters out non-object failed results", () => {
     const response = {
-      failedResults: [
-        { url: "https://failed.com", error: "Error" },
-        "invalid",
-        123,
-      ],
+      failedResults: [{ url: "https://failed.com", error: "Error" }, "invalid", 123],
     };
 
     const extracted = extractExtractResults(response);

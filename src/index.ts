@@ -23,7 +23,7 @@ import { TavilyUsageCache } from "./usage/status.js";
  * once on the first agent run and persists across sessions.
  */
 export default function (pi: ExtensionAPI): void {
-  const apiKey = process.env.TAVILY_API_KEY;
+  const apiKey = process.env.TAVILY_API_KEY?.trim();
   if (!apiKey) return;
 
   let registered = false;

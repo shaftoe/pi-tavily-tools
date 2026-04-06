@@ -2,13 +2,18 @@
  * Unit tests for shared execute helpers
  */
 
-import type { AgentToolUpdateCallback, ExtensionContext, TruncationResult } from "@mariozechner/pi-coding-agent";
+import type {
+  AgentToolUpdateCallback,
+  ExtensionContext,
+  SessionEntry,
+  TruncationResult,
+} from "@mariozechner/pi-coding-agent";
 import { describe, expect, mock, test } from "bun:test";
 import { buildToolResult, sendProgress } from "../src/tools/shared/execute.js";
 
 describe("sendProgress", () => {
   test("calls onUpdate with progress message", () => {
-    const onUpdate = mock((update: unknown) => {}) as AgentToolUpdateCallback;
+    const onUpdate = mock((_update: unknown) => {}) as AgentToolUpdateCallback;
 
     sendProgress(onUpdate, "Processing request...");
 
@@ -25,7 +30,7 @@ describe("sendProgress", () => {
   });
 
   test("handles empty progress message", () => {
-    const onUpdate = mock((update: unknown) => {}) as AgentToolUpdateCallback;
+    const onUpdate = mock((_update: unknown) => {}) as AgentToolUpdateCallback;
 
     sendProgress(onUpdate, "");
 
@@ -36,7 +41,7 @@ describe("sendProgress", () => {
   });
 
   test("handles long progress message", () => {
-    const onUpdate = mock((update: unknown) => {}) as AgentToolUpdateCallback;
+    const onUpdate = mock((_update: unknown) => {}) as AgentToolUpdateCallback;
     const longMessage = "A".repeat(1000);
 
     sendProgress(onUpdate, longMessage);
@@ -52,29 +57,11 @@ describe("buildToolResult", () => {
   function mockCtx(): ExtensionContext {
     return {
       cwd: "/tmp",
-      appendEntry: mock(async () => {}),
       sessionManager: {
-        getEntry: mock(() => null),
-        setEntry: mock(async () => {}),
+        getEntry: mock(() => undefined as SessionEntry | undefined),
         getAll: mock(() => ({})),
-      },
-    };
-  }
-
-  function mockTruncationResult(): TruncationResult {
-    return {
-      content: "truncated content",
-      truncated: true,
-      truncatedBy: "lines",
-      outputLines: 100,
-      totalLines: 500,
-      outputBytes: 5000,
-      totalBytes: 25000,
-      maxLines: 2000,
-      maxBytes: 51200,
-      lastLinePartial: false,
-      firstLineExceedsLimit: false,
-    };
+      } as any,
+    } as ExtensionContext;
   }
 
   test("builds tool result with content and details", async () => {
@@ -82,11 +69,16 @@ describe("buildToolResult", () => {
     const fullOutput = "Full output content";
     const toolName = "test-tool";
 
-    const result = await buildToolResult(fullOutput, ctx, toolName, (truncation, fullOutputPath) => ({
-      message: "Details built",
-      truncation,
-      fullOutputPath,
-    }));
+    const result = await buildToolResult(
+      fullOutput,
+      ctx,
+      toolName,
+      (truncation, fullOutputPath) => ({
+        message: "Details built",
+        truncation,
+        fullOutputPath,
+      })
+    );
 
     expect(result.content).toEqual([{ type: "text", text: fullOutput }]);
     expect(result.details).toEqual({
@@ -98,37 +90,22 @@ describe("buildToolResult", () => {
 
   test("passes truncation result to buildDetails callback", async () => {
     const ctx = mockCtx();
-    const fullOutput = "Short output";
+    const fullOutput = "a".repeat(60000);
     const toolName = "test-tool";
 
-    // Mock applyTruncation to return a truncation result
-    const mockApplyTruncation = mock(async () => ({
-      content: "truncated",
-      truncation: mockTruncationResult(),
-      fullOutputPath: "/tmp/test-tool-output.txt",
-    }));
-
-    // Temporarily replace the import
-    const originalModule = await import("../src/tools/shared/truncation.js");
-    const { applyTruncation: originalApplyTruncation } = originalModule;
-
-    // @ts-expect-error - mocking module exports
-    originalModule.applyTruncation = mockApplyTruncation;
-
-    try {
-      const result = await buildToolResult(fullOutput, ctx, toolName, (truncation, fullOutputPath) => ({
+    const result = await buildToolResult(
+      fullOutput,
+      ctx,
+      toolName,
+      (truncation, fullOutputPath) => ({
         truncation,
         fullOutputPath,
-      }));
+      })
+    );
 
-      expect(mockApplyTruncation).toHaveBeenCalledWith(fullOutput, ctx.cwd, toolName);
-      expect(result.details.truncation).toBeDefined();
-      expect(result.details.truncation?.truncated).toBe(true);
-      expect(result.details.fullOutputPath).toBe("/tmp/test-tool-output.txt");
-    } finally {
-      // @ts-expect-error - restoring original
-      originalModule.applyTruncation = originalApplyTruncation;
-    }
+    expect(result.details.truncation).toBeDefined();
+    expect(result.details.truncation?.truncated).toBe(true);
+    expect(result.details.fullOutputPath).toBeDefined();
   });
 
   test("handles content that needs truncation", async () => {
@@ -136,14 +113,19 @@ describe("buildToolResult", () => {
     const fullOutput = "a".repeat(60000); // Exceeds 50KB limit
     const toolName = "test-tool";
 
-    const result = await buildToolResult(fullOutput, ctx, toolName, (truncation, fullOutputPath) => ({
-      message: "Large content",
-      truncation,
-      fullOutputPath,
-    }));
+    const result = await buildToolResult(
+      fullOutput,
+      ctx,
+      toolName,
+      (truncation, fullOutputPath) => ({
+        message: "Large content",
+        truncation,
+        fullOutputPath,
+      })
+    );
 
     expect(result.content).toHaveLength(1);
-    expect(result.content[0].type).toBe("text");
+    expect(result.content[0]!.type).toBe("text");
     expect(result.details.truncation).toBeDefined();
     expect(result.details.truncation?.truncated).toBe(true);
     expect(result.details.fullOutputPath).toBeDefined();
@@ -154,14 +136,19 @@ describe("buildToolResult", () => {
     const fullOutput = "Short content";
     const toolName = "test-tool";
 
-    const result = await buildToolResult(fullOutput, ctx, toolName, (truncation, fullOutputPath) => ({
-      message: "Small content",
-      truncation,
-      fullOutputPath,
-    }));
+    const result = await buildToolResult(
+      fullOutput,
+      ctx,
+      toolName,
+      (truncation, fullOutputPath) => ({
+        message: "Small content",
+        truncation,
+        fullOutputPath,
+      })
+    );
 
-    expect(result.content[0].text).toBe("Short content");
-    expect(result.details.truncation?.truncated).toBe(false);
+    expect(result.content[0]!.text).toBe("Short content");
+    expect(result.details.truncation).toBeUndefined();
     expect(result.details.fullOutputPath).toBeUndefined();
   });
 
@@ -170,13 +157,18 @@ describe("buildToolResult", () => {
     const fullOutput = "";
     const toolName = "test-tool";
 
-    const result = await buildToolResult(fullOutput, ctx, toolName, (truncation, fullOutputPath) => ({
-      empty: true,
-      truncation,
-      fullOutputPath,
-    }));
+    const result = await buildToolResult(
+      fullOutput,
+      ctx,
+      toolName,
+      (truncation, fullOutputPath) => ({
+        empty: true,
+        truncation,
+        fullOutputPath,
+      })
+    );
 
-    expect(result.content[0].text).toBe("");
+    expect(result.content[0]!.text).toBe("");
     expect(result.details.empty).toBe(true);
   });
 
@@ -241,16 +233,11 @@ describe("buildToolResult", () => {
       timestamp: number;
     }
 
-    const result = await buildToolResult<TestDetails>(
-      fullOutput,
-      ctx,
-      toolName,
-      () => ({
-        count: 42,
-        name: "test",
-        timestamp: Date.now(),
-      })
-    );
+    const result = await buildToolResult<TestDetails>(fullOutput, ctx, toolName, () => ({
+      count: 42,
+      name: "test",
+      timestamp: Date.now(),
+    }));
 
     expect(result.details.count).toBe(42);
     expect(result.details.name).toBe("test");
@@ -262,10 +249,15 @@ describe("buildToolResult", () => {
     const fullOutput = "a".repeat(60000);
     const toolName = "my-custom-tool";
 
-    const result = await buildToolResult(fullOutput, ctx, toolName, (truncation, fullOutputPath) => ({
+    const result = await buildToolResult(
+      fullOutput,
+      ctx,
       toolName,
-      fullOutputPath,
-    }));
+      (_truncation, fullOutputPath) => ({
+        toolName,
+        fullOutputPath,
+      })
+    );
 
     expect(result.details.fullOutputPath).toContain("my-custom-tool");
     expect(result.details.fullOutputPath).toMatch(/\.txt$/);

@@ -6,7 +6,11 @@ import type { TruncationResult } from "@mariozechner/pi-coding-agent";
 import type { TavilyExtractOptions, TavilySearchOptions } from "@tavily/core";
 import { describe, expect, test } from "bun:test";
 import { buildExtractSuccessDetails, buildSuccessDetails } from "../src/tools/tavily/details.js";
-import type { ExtractFailedResult, ExtractResult, SearchResult } from "../src/tools/tavily/types.js";
+import type {
+  ExtractFailedResult,
+  ExtractResult,
+  SearchResult,
+} from "../src/tools/tavily/types.js";
 
 // ============================================================================
 // Helpers
@@ -209,7 +213,9 @@ describe("buildExtractSuccessDetails", () => {
     }));
   }
 
-  function makeFailedResults(overrides: Partial<ExtractFailedResult>[] = []): ExtractFailedResult[] {
+  function makeFailedResults(
+    overrides: Partial<ExtractFailedResult>[] = []
+  ): ExtractFailedResult[] {
     return overrides.map((f, i) => ({
       url: f.url ?? `https://failed-${i + 1}.com`,
       error: f.error ?? "Extraction failed",

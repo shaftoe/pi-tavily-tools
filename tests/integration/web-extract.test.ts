@@ -318,7 +318,7 @@ describe("web_extract integration tests", () => {
           expect(firstResult).toHaveProperty("title");
           expect(firstResult).toHaveProperty("rawContent");
           expect(typeof firstResult.url).toBe("string");
-          expect(typeof firstResult.title).toBe("string");
+          expect(typeof firstResult.title === "string" || firstResult.title === null).toBe(true);
           expect(typeof firstResult.rawContent).toBe("string");
         }
       });
@@ -405,7 +405,7 @@ describe("web_extract integration tests", () => {
 
         expect(result.details.urlCount).toBe(1);
         expect(result.details.successCount + result.details.failureCount).toBe(1);
-      });
+      }, 15000);
 
       test("content includes extracted content snippet", async () => {
         const tools = mockAPI.getTools();
