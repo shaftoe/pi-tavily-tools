@@ -1,3 +1,11 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and
+uses [semantic-release](https://semantic-release.gitbook.io/) for automated releases.
+The format is based on [Keep a Changelog](https://keepachangelog.org/en/1.1.0/).
+
 ## [0.5.2](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.1...v0.5.2) (2026-04-08)
 
 ### Performance Improvements
@@ -9,14 +17,6 @@
 ### Bug Fixes
 
 - ensure release process create a clean changelog ([a75777d](https://github.com/shaftoe/pi-tavily-tools/commit/a75777ddc8a31b6357f478e27bb5092e9df9fef3))
-
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and
-uses [semantic-release](https://semantic-release.gitbook.io/) for automated releases.
-The format is based on [Keep a Changelog](https://keepachangelog.org/en/1.1.0/).
 
 ## [0.5.0](https://github.com/shaftoe/pi-tavily-tools/compare/v0.4.1...v0.5.0) (2026-04-08)
 
