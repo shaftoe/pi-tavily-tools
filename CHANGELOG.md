@@ -1,4 +1,12 @@
-# [0.5.0](https://github.com/shaftoe/pi-tavily-tools/compare/v0.4.1...v0.5.0) (2026-04-08)
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and
+uses [semantic-release](https://semantic-release.gitbook.io/) for automated releases.
+The format is based on [Keep a Changelog](https://keepachangelog.org/en/1.1.0/).
+
+## [0.5.0](https://github.com/shaftoe/pi-tavily-tools/compare/v0.4.1...v0.5.0) (2026-04-08)
 
 ### Bug Fixes
 
@@ -14,7 +22,7 @@
 
 - sanitize provider errors to prevent credential leakage ([#7](https://github.com/shaftoe/pi-tavily-tools/issues/7)) ([792a0a2](https://github.com/shaftoe/pi-tavily-tools/commit/792a0a28dcfb8e82a2711db16c492769b1361504))
 
-# [0.4.0](https://github.com/shaftoe/pi-tavily-tools/compare/v0.3.1...v0.4.0) (2026-04-08)
+## [0.4.0](https://github.com/shaftoe/pi-tavily-tools/compare/v0.3.1...v0.4.0) (2026-04-08)
 
 ### Bug Fixes
 
@@ -23,13 +31,6 @@
 ### Features
 
 - add semantic release to automate releases ([ae572b0](https://github.com/shaftoe/pi-tavily-tools/commit/ae572b0c2c2529e8b9abc2b70268390bb226aba8))
-
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.3.1] - 2026-04-06
 
