@@ -14,7 +14,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import type { TavilyClient } from "@tavily/core";
 
-import { buildToolResult, sendProgress } from "./shared/execute.js";
+import { buildToolResult, raceAbort, sendProgress } from "./shared/execute.js";
 import { buildSearchOptions, validateQuery } from "./tavily/client.js";
 import { buildSuccessDetails } from "./tavily/details.js";
 import { extractSearchResults, formatWebSearchResponse } from "./tavily/formatters.js";
@@ -49,13 +49,13 @@ export function registerWebSearchTool(pi: ExtensionAPI, client: TavilyClient): v
     parameters: WebSearchParamsSchema,
 
     // Pi catches thrown errors and reports them to the LLM with isError: true
-    async execute(_toolCallId, params, _signal, onUpdate, ctx) {
+    async execute(_toolCallId, params, signal, onUpdate, ctx) {
       const query = validateQuery(params.query);
       const searchOptions = buildSearchOptions(params);
 
       sendProgress(onUpdate, `Searching for: ${query}`);
 
-      const response = await client.search(query, searchOptions);
+      const response = await raceAbort(client.search(query, searchOptions), signal);
       const { answer, results, images } = extractSearchResults(response);
       const fullOutput = formatWebSearchResponse(
         answer,

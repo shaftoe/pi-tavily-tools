@@ -9,7 +9,41 @@ import type {
   TruncationResult,
 } from "@mariozechner/pi-coding-agent";
 import { describe, expect, mock, test } from "bun:test";
-import { buildToolResult, sendProgress } from "../src/tools/shared/execute.js";
+import { buildToolResult, raceAbort, sendProgress } from "../src/tools/shared/execute.js";
+
+describe("raceAbort", () => {
+  test("resolves with promise value when no signal", async () => {
+    const result = await raceAbort(Promise.resolve(42), undefined);
+    expect(result).toBe(42);
+  });
+
+  test("resolves with promise value when signal not aborted", async () => {
+    const controller = new AbortController();
+    const result = await raceAbort(Promise.resolve("ok"), controller.signal);
+    expect(result).toBe("ok");
+  });
+
+  test("rejects immediately when signal already aborted", async () => {
+    const controller = new AbortController();
+    controller.abort();
+    await expect(raceAbort(Promise.resolve("ok"), controller.signal)).rejects.toThrow(
+      "Tool call aborted"
+    );
+  });
+
+  test("rejects when signal is aborted after call starts", async () => {
+    const controller = new AbortController();
+    const never = new Promise<string>(() => {});
+    const race = raceAbort(never, controller.signal);
+    controller.abort();
+    await expect(race).rejects.toThrow("Tool call aborted");
+  });
+
+  test("propagates underlying promise rejection", async () => {
+    const result = raceAbort(Promise.reject(new Error("API error")), undefined);
+    await expect(result).rejects.toThrow("API error");
+  });
+});
 
 describe("sendProgress", () => {
   test("calls onUpdate with progress message", () => {
@@ -60,8 +94,8 @@ describe("buildToolResult", () => {
       sessionManager: {
         getEntry: mock(() => undefined as SessionEntry | undefined),
         getAll: mock(() => ({})),
-      } as any,
-    } as ExtensionContext;
+      },
+    } as unknown as ExtensionContext;
   }
 
   test("builds tool result with content and details", async () => {

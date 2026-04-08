@@ -15,6 +15,35 @@ import type {
 import { applyTruncation } from "./truncation.js";
 
 // ============================================================================
+// Abort Signal
+// ============================================================================
+
+/**
+ * Race a promise against an AbortSignal.
+ * The SDK doesn't natively support signal, so we wrap the call.
+ * The underlying HTTP request still completes on Tavily's side,
+ * but the tool call rejects immediately on cancellation.
+ */
+export function raceAbort<T>(promise: Promise<T>, signal: AbortSignal | undefined): Promise<T> {
+  if (!signal) return promise;
+  if (signal.aborted) return Promise.reject(new Error("Tool call aborted"));
+  return new Promise<T>((resolve, reject) => {
+    const onAbort = () => reject(new Error("Tool call aborted"));
+    signal.addEventListener("abort", onAbort, { once: true });
+    promise.then(
+      (value) => {
+        signal.removeEventListener("abort", onAbort);
+        resolve(value);
+      },
+      (error: unknown) => {
+        signal.removeEventListener("abort", onAbort);
+        reject(error instanceof Error ? error : new Error(String(error)));
+      }
+    );
+  });
+}
+
+// ============================================================================
 // Progress Update
 // ============================================================================
 
