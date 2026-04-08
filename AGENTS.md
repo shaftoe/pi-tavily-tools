@@ -137,9 +137,44 @@ test("web search works", async () => {
 
 ## Version Management
 
-- **Semantic Versioning:** Follow SemVer (major.minor.patch)
-- **Changelog:** Document breaking changes, features, and fixes
-- **Updates:** Keep dependencies updated regularly with `bun update`
+### Semantic Release
+
+This project uses [semantic-release](https://github.com/semantic-release/semantic-release) for automated version management and publishing. Releases are triggered automatically when commits are pushed to the `master` branch.
+
+### Release Process
+
+1. **Conventional Commits:** Follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+   - `feat: add new feature` → **minor** version bump
+   - `fix: fix a bug` → **patch** version bump
+   - `feat!: breaking change` or `fix!: breaking change` → **major** version bump
+   - `chore: update dependencies` → no version bump (internal change)
+
+2. **Automatic Releases:** When you push to `master`:
+   - CI runs tests and coverage
+   - `semantic-release` analyzes commits to determine version bump
+   - Creates a git tag (e.g., `v0.4.0`)
+   - Updates `CHANGELOG.md` automatically
+   - Publishes to npm with provenance
+   - Creates GitHub release
+
+3. **Local Testing:** Before pushing, you can test locally:
+
+   ```bash
+   bun run release:dry-run  # Preview what would be released
+   ```
+
+4. **Manual Release Scripts:**
+   ```bash
+   bun run release           # Run semantic-release locally
+   ```
+
+### Changelog
+
+The `CHANGELOG.md` is automatically maintained by `semantic-release`. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+### Dependency Updates
+
+Keep dependencies updated regularly with `bun update`. Peer dependencies versions are managed separately in `package.json`.
 
 ---
 
