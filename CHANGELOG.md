@@ -1,9 +1,8 @@
 ## [0.4.1](https://github.com/shaftoe/pi-tavily-tools/compare/v0.4.0...v0.4.1) (2026-04-08)
 
-
 ### Bug Fixes
 
-* sanitize provider errors to prevent credential leakage ([#7](https://github.com/shaftoe/pi-tavily-tools/issues/7)) ([792a0a2](https://github.com/shaftoe/pi-tavily-tools/commit/792a0a28dcfb8e82a2711db16c492769b1361504))
+- sanitize provider errors to prevent credential leakage ([#7](https://github.com/shaftoe/pi-tavily-tools/issues/7)) ([792a0a2](https://github.com/shaftoe/pi-tavily-tools/commit/792a0a28dcfb8e82a2711db16c492769b1361504))
 
 # [0.4.0](https://github.com/shaftoe/pi-tavily-tools/compare/v0.3.1...v0.4.0) (2026-04-08)
 
