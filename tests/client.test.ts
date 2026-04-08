@@ -59,7 +59,7 @@ describe("buildSearchOptions", () => {
     const params = {};
     const options = buildSearchOptions(params);
 
-    expect(options.maxResults).toBe(5);
+    expect(options.maxResults).toBe(8);
     expect(options.searchDepth).toBe("basic");
     expect(options.includeAnswer).toBe(true);
     expect(options.includeImages).toBe(false);
