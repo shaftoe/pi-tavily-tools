@@ -14,6 +14,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import type { TavilyClient } from "@tavily/core";
 
+import { resultCache } from "./shared/cache.js";
 import { buildToolResult, raceAbort, sanitizeError, sendProgress } from "./shared/execute.js";
 import { buildSearchOptions, validateQuery } from "./tavily/client.js";
 import { buildSuccessDetails } from "./tavily/details.js";
@@ -62,6 +63,14 @@ export function registerWebSearchTool(pi: ExtensionAPI, client: TavilyClient): v
         throw sanitizeError(error);
       }
       const { answer, results, images } = extractSearchResults(response);
+
+      for (const r of results) {
+        const content = r.rawContent ?? r.content;
+        if (r.url && content) {
+          resultCache.set({ url: r.url, title: r.title, rawContent: content });
+        }
+      }
+
       const fullOutput = formatWebSearchResponse(
         answer,
         results,

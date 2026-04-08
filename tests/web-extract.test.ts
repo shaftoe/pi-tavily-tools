@@ -6,7 +6,8 @@
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { describe, expect, test } from "bun:test";
+import { beforeEach, describe, expect, test } from "bun:test";
+import { resultCache } from "../src/tools/shared/cache.js";
 import { registerWebExtractTool } from "../src/tools/web-extract.js";
 
 // ============================================================================
@@ -76,6 +77,10 @@ function mockResponse(overrides: Record<string, unknown> = {}) {
 // ============================================================================
 // Tests
 // ============================================================================
+
+beforeEach(() => {
+  resultCache.clear();
+});
 
 describe("registerWebExtractTool", () => {
   test("registers tool with correct name and label", () => {
