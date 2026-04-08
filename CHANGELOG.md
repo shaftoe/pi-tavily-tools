@@ -1,3 +1,9 @@
+## [0.5.3](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.2...v0.5.3) (2026-04-08)
+
+### Bug Fixes
+
+- ensure default max result is consistent ([deaaaeb](https://github.com/shaftoe/pi-tavily-tools/commit/deaaaeba17f846cf34ac88bde04a0ba645264c80))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
