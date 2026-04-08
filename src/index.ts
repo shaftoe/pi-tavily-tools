@@ -24,7 +24,12 @@ import { TavilyUsageCache } from "./usage/status.js";
  */
 export default function (pi: ExtensionAPI): void {
   const apiKey = process.env.TAVILY_API_KEY?.trim();
-  if (!apiKey) return;
+  if (!apiKey) {
+    pi.on("session_start", (_event, ctx) => {
+      ctx.ui.notify("Web Search · TAVILY_API_KEY not set. Get a free key at tavily.com", "warning");
+    });
+    return;
+  }
 
   let registered = false;
   const usageCache = new TavilyUsageCache(apiKey);
@@ -46,5 +51,8 @@ export default function (pi: ExtensionAPI): void {
 
   pi.on("session_shutdown", (_event, ctx) => {
     usageCache.clear(ctx);
+    import("node:fs/promises")
+      .then(({ rm }) => rm(`${ctx.cwd}/.pi-tavily-temp`, { recursive: true, force: true }))
+      .catch(() => {}); // best-effort
   });
 }

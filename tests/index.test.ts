@@ -27,7 +27,7 @@ describe("Extension entry point", () => {
     } as unknown as ExtensionAPI;
   }
 
-  test("does not register hooks when TAVILY_API_KEY is missing", async () => {
+  test("registers only session_start warning hook when TAVILY_API_KEY is missing", async () => {
     delete process.env.TAVILY_API_KEY;
 
     const { default: extension } = await import("../src/index.js");
@@ -35,7 +35,8 @@ describe("Extension entry point", () => {
 
     extension(pi);
 
-    expect(pi.on).toHaveBeenCalledTimes(0);
+    expect(pi.on).toHaveBeenCalledTimes(1);
+    expect(pi.on).toHaveBeenCalledWith("session_start", expect.any(Function));
   });
 
   test("registers hooks when TAVILY_API_KEY is present", async () => {
@@ -61,7 +62,8 @@ describe("Extension entry point", () => {
 
     extension(pi);
 
-    expect(pi.on).toHaveBeenCalledTimes(0);
+    expect(pi.on).toHaveBeenCalledTimes(1);
+    expect(pi.on).toHaveBeenCalledWith("session_start", expect.any(Function));
   });
 
   test("handles whitespace-only API key as missing", async () => {
@@ -72,7 +74,8 @@ describe("Extension entry point", () => {
 
     extension(pi);
 
-    expect(pi.on).toHaveBeenCalledTimes(0);
+    expect(pi.on).toHaveBeenCalledTimes(1);
+    expect(pi.on).toHaveBeenCalledWith("session_start", expect.any(Function));
   });
 
   test("session_start handler only runs once on repeated calls", async () => {
