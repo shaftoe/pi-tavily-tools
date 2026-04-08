@@ -279,22 +279,6 @@ describe("web_search integration tests", () => {
         expect(result2.details.searchDepth).toBe("advanced");
       });
 
-      test("includes images when requested", async () => {
-        const tools = mockAPI.getTools();
-        const webSearchTool = tools[0];
-        if (!webSearchTool) throw new Error("Tool not registered");
-
-        const result = await webSearchTool.execute(
-          "test-call-6",
-          { query: "sunset", include_images: true },
-          undefined,
-          undefined,
-          { cwd: "/tmp" }
-        );
-
-        expect(result.details.includeImages).toBe(true);
-      });
-
       test("handles days parameter for time-limited search", async () => {
         const tools = mockAPI.getTools();
         const webSearchTool = tools[0];

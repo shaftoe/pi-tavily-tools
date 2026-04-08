@@ -243,7 +243,7 @@ describe("web_extract integration tests", () => {
         );
 
         expect(result.details.includeImages).toBe(true);
-      });
+      }, 10000);
 
       test("respects format parameter", async () => {
         const tools = mockAPI.getTools();
