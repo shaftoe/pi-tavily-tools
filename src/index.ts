@@ -11,7 +11,7 @@ import { resultCache } from "./tools/shared/cache.js";
 import { createTavilyClient } from "./tools/tavily/client.js";
 import { registerWebExtractTool } from "./tools/web-extract.js";
 import { registerWebSearchTool } from "./tools/web-search.js";
-import { TavilyUsageCache } from "./usage/status.js";
+import { TavilyUsageCache } from "./usage/index.js";
 
 /**
  * Main extension entry point.
