@@ -44,7 +44,7 @@ export function createTavilyClient(apiKey?: string): TavilyClient {
 export function buildSearchOptions(params: Record<string, unknown>): TavilySearchOptions {
   return {
     maxResults:
-      typeof params.max_results === "number" ? Math.max(1, Math.min(20, params.max_results)) : 5,
+      typeof params.max_results === "number" ? Math.max(1, Math.min(20, params.max_results)) : 8,
     searchDepth: (params.search_depth as "basic" | "advanced") ?? "basic",
     includeAnswer: params.include_answer !== false,
     includeImages: params.include_images === true,
