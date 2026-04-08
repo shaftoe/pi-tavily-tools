@@ -15,7 +15,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import type { TavilyClient } from "@tavily/core";
 
-import { buildToolResult, raceAbort, sendProgress } from "./shared/execute.js";
+import { buildToolResult, raceAbort, sanitizeError, sendProgress } from "./shared/execute.js";
 import { buildExtractOptions, validateUrls } from "./tavily/client.js";
 import { buildExtractSuccessDetails } from "./tavily/details.js";
 import { extractExtractResults, formatExtractResponse } from "./tavily/formatters.js";
@@ -59,7 +59,12 @@ export function registerWebExtractTool(pi: ExtensionAPI, client: TavilyClient): 
 
       sendProgress(onUpdate, `Extracting content from ${urlCount} ${urlText}...`);
 
-      const response = await raceAbort(client.extract(urls, extractOptions), signal);
+      let response;
+      try {
+        response = await raceAbort(client.extract(urls, extractOptions), signal);
+      } catch (error) {
+        throw sanitizeError(error);
+      }
       const { results, failedResults } = extractExtractResults(response);
       const fullOutput = formatExtractResponse(
         results,

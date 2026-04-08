@@ -44,6 +44,23 @@ export function raceAbort<T>(promise: Promise<T>, signal: AbortSignal | undefine
 }
 
 // ============================================================================
+// Error Sanitization
+// ============================================================================
+
+/**
+ * Sanitize a provider error before surfacing it.
+ * Strips Tavily API keys and auth header values from error messages
+ * to prevent credential leakage in tool output or logs.
+ */
+export function sanitizeError(error: unknown): Error {
+  const message = error instanceof Error ? error.message : String(error);
+  const sanitized = message
+    .replace(/tvly-[a-zA-Z0-9_-]+/gi, "[REDACTED]")
+    .replace(/(authorization|x-api-key)[^\n]*/gi, "$1: [REDACTED]");
+  return new Error(sanitized);
+}
+
+// ============================================================================
 // Progress Update
 // ============================================================================
 
