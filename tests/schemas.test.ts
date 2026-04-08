@@ -3,6 +3,7 @@
  */
 
 import { describe, expect, test } from "bun:test";
+import { DEFAULT_MAX_RESULTS } from "../src/tools/tavily/client.js";
 import {
   BaseSearchParamsSchema,
   IncludeOptionsSchema,
@@ -48,7 +49,9 @@ describe("WebSearchParamsSchema", () => {
   test("max_results has description", () => {
     const properties = WebSearchParamsSchema.properties as Record<string, unknown>;
     const maxResultsSchema = properties.max_results as { description?: string };
-    expect(maxResultsSchema.description).toBe("Number of results to return (1-20, default: 5)");
+    expect(maxResultsSchema.description).toBe(
+      `Number of results to return (1-20, default: ${DEFAULT_MAX_RESULTS})`
+    );
   });
 
   test("has optional search_depth field", () => {
@@ -180,7 +183,9 @@ describe("BaseSearchParamsSchema", () => {
 
   test("max_results has description", () => {
     const maxResultsSchema = BaseSearchParamsSchema.max_results as { description?: string };
-    expect(maxResultsSchema.description).toBe("Number of results to return (1-20, default: 5)");
+    expect(maxResultsSchema.description).toBe(
+      `Number of results to return (1-20, default: ${DEFAULT_MAX_RESULTS})`
+    );
   });
 
   test("has search_depth property", () => {

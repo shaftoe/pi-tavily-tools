@@ -4,6 +4,7 @@
 
 import { describe, expect, test } from "bun:test";
 import {
+  DEFAULT_MAX_RESULTS,
   buildSearchOptions,
   createSearchFunction,
   createTavilyClient,
@@ -59,7 +60,7 @@ describe("buildSearchOptions", () => {
     const params = {};
     const options = buildSearchOptions(params);
 
-    expect(options.maxResults).toBe(8);
+    expect(options.maxResults).toBe(DEFAULT_MAX_RESULTS);
     expect(options.searchDepth).toBe("basic");
     expect(options.includeAnswer).toBe(true);
     expect(options.includeImages).toBe(false);

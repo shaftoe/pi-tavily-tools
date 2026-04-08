@@ -9,7 +9,7 @@ This extension provides two tools:
 - `web_search`: Find current information, recent news, documentation, and time-sensitive data
 - `web_extract`: Extract raw content from one or more web pages for detailed analysis
 
-Requires a valid `TAVILY_API_KEY` exported in the enviornment, e.g.
+Requires a valid `TAVILY_API_KEY` exported in the environment, e.g.
 
 ```bash
 TAVILY_API_KEY=tvly-xxxx-xxxxxxx-xxxxxxxxxx pi
@@ -152,7 +152,7 @@ The `web_search` tool accepts the following parameters:
 | Parameter             | Type    | Required | Default | Description                                    |
 | --------------------- | ------- | -------- | ------- | ---------------------------------------------- |
 | `query`               | string  | Yes      | -       | The search query string                        |
-| `max_results`         | number  | No       | 5       | Number of results to return (1-20)             |
+| `max_results`         | number  | No       | 8       | Number of results to return (1-20)             |
 | `search_depth`        | string  | No       | "basic" | Search depth: "basic" or "advanced"            |
 | `include_answer`      | boolean | No       | true    | Include AI-generated answer                    |
 | `include_raw_content` | boolean | No       | false   | Include raw page content (markdown or text)    |

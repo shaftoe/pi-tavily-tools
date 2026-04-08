@@ -3,6 +3,7 @@
  */
 
 import { Text, truncateToWidth } from "@mariozechner/pi-tui";
+import { DEFAULT_MAX_RESULTS } from "./client.js";
 import type { SearchResponseDetails, WebExtractDetails, WebSearchDetails } from "./types.js";
 
 // ============================================================================
@@ -32,7 +33,7 @@ export function renderWebSearchCall(args: Record<string, unknown>, theme: Theme)
   text += theme.fg("accent", `"${query}"`);
 
   const options: string[] = [];
-  if (typeof args.max_results === "number" && args.max_results !== 5) {
+  if (typeof args.max_results === "number" && args.max_results !== DEFAULT_MAX_RESULTS) {
     options.push(`max=${args.max_results}`);
   }
   if (args.search_depth === "advanced") {

@@ -12,6 +12,13 @@ import {
 } from "@tavily/core";
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+/** Default number of search results when max_results is not specified. */
+export const DEFAULT_MAX_RESULTS = 8;
+
+// ============================================================================
 // Client Creation
 // ============================================================================
 
@@ -44,7 +51,9 @@ export function createTavilyClient(apiKey?: string): TavilyClient {
 export function buildSearchOptions(params: Record<string, unknown>): TavilySearchOptions {
   return {
     maxResults:
-      typeof params.max_results === "number" ? Math.max(1, Math.min(20, params.max_results)) : 8,
+      typeof params.max_results === "number"
+        ? Math.max(1, Math.min(20, params.max_results))
+        : DEFAULT_MAX_RESULTS,
     searchDepth: (params.search_depth as "basic" | "advanced") ?? "basic",
     includeAnswer: params.include_answer !== false,
     includeImages: params.include_images === true,

@@ -4,6 +4,9 @@
 
 import { StringEnum } from "@mariozechner/pi-ai";
 import { Type } from "@sinclair/typebox";
+import { DEFAULT_MAX_RESULTS } from "./client.js";
+
+const maxResultsDescription = `Number of results to return (1-20, default: ${DEFAULT_MAX_RESULTS})`;
 
 // ============================================================================
 // Web Search Schema
@@ -11,9 +14,7 @@ import { Type } from "@sinclair/typebox";
 
 export const WebSearchParamsSchema = Type.Object({
   query: Type.String({ description: "Search query string" }),
-  max_results: Type.Optional(
-    Type.Number({ description: "Number of results to return (1-20, default: 5)" })
-  ),
+  max_results: Type.Optional(Type.Number({ description: maxResultsDescription })),
   search_depth: Type.Optional(
     StringEnum(["basic", "advanced"] as const, {
       description: "Search depth: 'basic' or 'advanced' (default: 'basic')",
@@ -65,9 +66,7 @@ export const WebExtractParamsSchema = Type.Object({
 
 export const BaseSearchParamsSchema = {
   query: Type.String({ description: "Search query string" }),
-  max_results: Type.Optional(
-    Type.Number({ description: "Number of results to return (1-20, default: 5)" })
-  ),
+  max_results: Type.Optional(Type.Number({ description: maxResultsDescription })),
   search_depth: Type.Optional(
     StringEnum(["basic", "advanced"] as const, {
       description: "Search depth: 'basic' or 'advanced' (default: 'basic')",

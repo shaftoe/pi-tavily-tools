@@ -10,6 +10,7 @@
 
 import type { TruncationResult } from "@mariozechner/pi-coding-agent";
 import type { TavilyExtractOptions, TavilySearchOptions } from "@tavily/core";
+import { DEFAULT_MAX_RESULTS } from "./client.js";
 import type {
   ExtractFailedResult,
   ExtractResult,
@@ -27,7 +28,7 @@ import type {
  */
 function optionDefaults(options: TavilySearchOptions) {
   return {
-    maxResults: options.maxResults ?? 5,
+    maxResults: options.maxResults ?? DEFAULT_MAX_RESULTS,
     searchDepth: String(options.searchDepth ?? "basic"),
     includeImages: options.includeImages ?? false,
     includeAnswer: options.includeAnswer !== false,

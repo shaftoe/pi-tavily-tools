@@ -5,6 +5,7 @@
 import type { TruncationResult } from "@mariozechner/pi-coding-agent";
 import type { TavilyExtractOptions, TavilySearchOptions } from "@tavily/core";
 import { describe, expect, test } from "bun:test";
+import { DEFAULT_MAX_RESULTS } from "../src/tools/tavily/client.js";
 import { buildExtractSuccessDetails, buildSuccessDetails } from "../src/tools/tavily/details.js";
 import type {
   ExtractFailedResult,
@@ -27,7 +28,7 @@ function makeResults(overrides: Partial<SearchResult>[] = []): SearchResult[] {
 
 function defaultOptions(): TavilySearchOptions {
   return {
-    maxResults: 5,
+    maxResults: DEFAULT_MAX_RESULTS,
     searchDepth: "basic",
     includeAnswer: true,
     includeImages: false,
@@ -54,7 +55,7 @@ describe("buildSuccessDetails", () => {
     const details = buildSuccessDetails(makeInput());
 
     expect(details.query).toBe("test query");
-    expect(details.maxResults).toBe(5);
+    expect(details.maxResults).toBe(DEFAULT_MAX_RESULTS);
     expect(details.searchDepth).toBe("basic");
     expect(details.includeAnswer).toBe(true);
     expect(details.includeRawContent).toBe(false);
@@ -124,7 +125,7 @@ describe("buildSuccessDetails", () => {
     const details = buildSuccessDetails(
       makeInput({ options: { ...defaultOptions(), maxResults: undefined } })
     );
-    expect(details.maxResults).toBe(5);
+    expect(details.maxResults).toBe(DEFAULT_MAX_RESULTS);
   });
 
   test("uses provided maxResults", () => {

@@ -4,6 +4,7 @@
 
 import type { Text } from "@mariozechner/pi-tui";
 import { describe, expect, test } from "bun:test";
+import { DEFAULT_MAX_RESULTS } from "../src/tools/tavily/client.js";
 import { renderWebSearchCall, renderWebSearchResult } from "../src/tools/tavily/renderers.js";
 
 // Helper to access private text property for testing
@@ -34,8 +35,8 @@ describe("renderWebSearchCall", () => {
     expect(getText(result)).toContain("max=10");
   });
 
-  test("does not include max_results when it is default (5)", () => {
-    const args = { query: "test", max_results: 5 };
+  test("does not include max_results when it is default", () => {
+    const args = { query: "test", max_results: DEFAULT_MAX_RESULTS };
 
     const result = renderWebSearchCall(args, mockTheme);
 
