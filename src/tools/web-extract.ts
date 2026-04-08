@@ -15,6 +15,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import type { TavilyClient } from "@tavily/core";
 
+import { resultCache } from "./shared/cache.js";
 import { buildToolResult, raceAbort, sanitizeError, sendProgress } from "./shared/execute.js";
 import { buildExtractOptions, validateUrls } from "./tavily/client.js";
 import { buildExtractSuccessDetails } from "./tavily/details.js";
@@ -58,6 +59,24 @@ export function registerWebExtractTool(pi: ExtensionAPI, client: TavilyClient): 
       const urlText = urlCount === 1 ? "URL" : "URLs";
 
       sendProgress(onUpdate, `Extracting content from ${urlCount} ${urlText}...`);
+
+      // Check cache for single-URL requests — avoids a redundant API call when
+      // the URL was already returned with content in a prior web_search result.
+      if (urlCount === 1 && !extractOptions.query) {
+        const cached = resultCache.get(urls[0]!);
+        if (cached) {
+          return buildToolResult(cached.rawContent, ctx, "extract", (truncation, fullOutputPath) =>
+            buildExtractSuccessDetails({
+              urlCount,
+              options: extractOptions,
+              results: [cached],
+              failedResults: [],
+              truncation,
+              fullOutputPath,
+            })
+          );
+        }
+      }
 
       let response;
       try {

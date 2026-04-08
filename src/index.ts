@@ -7,6 +7,7 @@
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { resultCache } from "./tools/shared/cache.js";
 import { createTavilyClient } from "./tools/tavily/client.js";
 import { registerWebExtractTool } from "./tools/web-extract.js";
 import { registerWebSearchTool } from "./tools/web-search.js";
@@ -35,6 +36,8 @@ export default function (pi: ExtensionAPI): void {
   const usageCache = new TavilyUsageCache(apiKey);
 
   pi.on("session_start", async (_event, ctx) => {
+    resultCache.clear();
+
     if (registered) return;
     registered = true;
 

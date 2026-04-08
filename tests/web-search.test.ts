@@ -6,7 +6,8 @@
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { describe, expect, test } from "bun:test";
+import { beforeEach, describe, expect, test } from "bun:test";
+import { resultCache } from "../src/tools/shared/cache.js";
 import { registerWebSearchTool } from "../src/tools/web-search.js";
 
 // ============================================================================
@@ -66,6 +67,10 @@ function mockResponse(overrides: Record<string, unknown> = {}) {
 // ============================================================================
 // Tests
 // ============================================================================
+
+beforeEach(() => {
+  resultCache.clear();
+});
 
 describe("registerWebSearchTool", () => {
   test("registers tool with correct name and label", () => {
