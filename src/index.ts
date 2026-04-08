@@ -7,11 +7,14 @@
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { resultCache } from "./tools/shared/cache.js";
-import { createTavilyClient } from "./tools/tavily/client.js";
-import { registerWebExtractTool } from "./tools/web-extract.js";
-import { registerWebSearchTool } from "./tools/web-search.js";
-import { TavilyUsageCache } from "./usage/index.js";
+import {
+  cleanupTempDir,
+  createTavilyClient,
+  registerWebExtractTool,
+  registerWebSearchTool,
+  resultCache,
+} from "./tools/index.js";
+import { UsageCache } from "./usage/index.js";
 
 /**
  * Main extension entry point.
@@ -33,7 +36,7 @@ export default function (pi: ExtensionAPI): void {
   }
 
   let registered = false;
-  const usageCache = new TavilyUsageCache(apiKey);
+  const usageCache = new UsageCache(apiKey);
 
   pi.on("session_start", async (_event, ctx) => {
     resultCache.clear();
@@ -52,10 +55,8 @@ export default function (pi: ExtensionAPI): void {
     await usageCache.updateStatus(ctx);
   });
 
-  pi.on("session_shutdown", (_event, ctx) => {
+  pi.on("session_shutdown", async (_event, ctx) => {
     usageCache.clear(ctx);
-    import("node:fs/promises")
-      .then(({ rm }) => rm(`${ctx.cwd}/.pi-tavily-temp`, { recursive: true, force: true }))
-      .catch(() => {}); // best-effort
+    await cleanupTempDir(ctx.cwd).catch(() => {}); // best-effort
   });
 }

@@ -13,7 +13,7 @@ import { getTavilyUsage, type TavilyUsageData } from "./api.js";
 export type FetchUsageFn = (apiKey: string) => Promise<TavilyUsageData>;
 
 /** Cache for Tavily usage data to avoid excessive API calls */
-export class TavilyUsageCache {
+export class UsageCache {
   private readonly apiKey: string;
   private lastUsage: TavilyUsageData | null = null;
   private lastFetchTime = 0;
@@ -45,7 +45,7 @@ export class TavilyUsageCache {
       if (
         this.lastUsage &&
         this.lastFetchTime &&
-        now - this.lastFetchTime < TavilyUsageCache.FETCH_COOLDOWN_MS
+        now - this.lastFetchTime < UsageCache.FETCH_COOLDOWN_MS
       ) {
         this.setStatusFromUsage(ctx, this.lastUsage);
         return;

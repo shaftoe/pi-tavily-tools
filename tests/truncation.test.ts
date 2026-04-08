@@ -3,16 +3,16 @@
  */
 
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
-import { access, mkdir, rm } from "node:fs/promises";
-import { applyTruncation } from "../src/tools/shared/truncation.js";
+import { access, mkdir, readFile, rm, stat } from "node:fs/promises";
+import { applyTruncation, cleanupTempDir, getTempDir } from "../src/tools/shared/truncation.js";
 
 // ============================================================================
 // Test Helpers
 // ============================================================================
 
-const testTempDir = "/tmp/test-truncation";
+const testTempDir = "/tmp/pi-tavily-extension-test-truncation";
 
-async function cleanupTempDir() {
+async function removeTestDir() {
   try {
     await rm(testTempDir, { recursive: true, force: true });
   } catch {
@@ -21,12 +21,88 @@ async function cleanupTempDir() {
 }
 
 beforeEach(async () => {
-  await cleanupTempDir();
+  await removeTestDir();
   await mkdir(testTempDir, { recursive: true });
 });
 
 afterEach(async () => {
-  await cleanupTempDir();
+  await removeTestDir();
+});
+
+// ============================================================================
+// getTempDir Tests
+// ============================================================================
+
+describe("getTempDir", () => {
+  test("returns path with .pi-tavily-temp suffix", () => {
+    expect(getTempDir("/project")).toBe("/project/.pi-tavily-temp");
+  });
+
+  test("preserves cwd as-is", () => {
+    expect(getTempDir("/some/deep/path")).toBe("/some/deep/path/.pi-tavily-temp");
+  });
+
+  test("handles relative paths", () => {
+    expect(getTempDir(".")).toBe("./.pi-tavily-temp");
+  });
+});
+
+// ============================================================================
+// cleanupTempDir Tests
+// ============================================================================
+
+describe("cleanupTempDir", () => {
+  test("removes temp directory and its contents", async () => {
+    const tempDir = getTempDir(testTempDir);
+    await mkdir(tempDir, { recursive: true });
+    const { writeFile } = await import("node:fs/promises");
+    await writeFile(`${tempDir}/test-file.txt`, "hello", "utf8");
+
+    // Sanity: dir exists
+    await stat(tempDir);
+
+    await cleanupTempDir(testTempDir);
+
+    // Dir should be gone
+    expect(stat(tempDir)).rejects.toThrow();
+  });
+
+  test("succeeds when temp directory does not exist", async () => {
+    await rm(testTempDir, { recursive: true, force: true });
+
+    expect(cleanupTempDir(testTempDir)).resolves.toBeUndefined();
+  });
+
+  test("removes nested files created by applyTruncation", async () => {
+    const longContent = Array.from({ length: 3000 }, () => "Line content").join("\n");
+
+    const result1 = await applyTruncation(longContent, testTempDir, "tool-a");
+    const result2 = await applyTruncation(longContent, testTempDir, "tool-b");
+
+    // Sanity: files exist
+    await access(result1.fullOutputPath!);
+    await access(result2.fullOutputPath!);
+
+    await cleanupTempDir(testTempDir);
+
+    expect(access(result1.fullOutputPath!)).rejects.toThrow();
+    expect(access(result2.fullOutputPath!)).rejects.toThrow();
+  });
+
+  test("preserves files outside temp directory", async () => {
+    const tempDir = getTempDir(testTempDir);
+    const outsideFile = `${testTempDir}/keep-me.txt`;
+    const { writeFile } = await import("node:fs/promises");
+    await mkdir(tempDir, { recursive: true });
+    await writeFile(outsideFile, "untouched", "utf8");
+    await writeFile(`${tempDir}/remove-me.txt`, "gone", "utf8");
+
+    await cleanupTempDir(testTempDir);
+
+    const content = await readFile(outsideFile, "utf8");
+    expect(content).toBe("untouched");
+    expect(stat(tempDir)).rejects.toThrow();
+  });
 });
 
 // ============================================================================

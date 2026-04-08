@@ -22,6 +22,21 @@ export interface TruncatedOutput {
 }
 
 /**
+ * Get the temp directory path used for storing truncated output files.
+ */
+export function getTempDir(cwd: string): string {
+  return `${cwd}/.pi-tavily-temp`;
+}
+
+/**
+ * Remove the temp directory and all its contents.
+ */
+export async function cleanupTempDir(cwd: string): Promise<void> {
+  const { rm } = await import("node:fs/promises");
+  await rm(getTempDir(cwd), { recursive: true, force: true });
+}
+
+/**
  * Apply truncation to output and save full content to temp file if needed
  */
 export async function applyTruncation(
@@ -38,7 +53,7 @@ export async function applyTruncation(
 
   // Save full output to temp file if truncated
   if (truncation.truncated) {
-    const tempDir = `${cwd}/.pi-tavily-temp`;
+    const tempDir = getTempDir(cwd);
     const timestamp = Date.now();
     const tempFile = `${tempDir}/${toolName}-${timestamp}.txt`;
 

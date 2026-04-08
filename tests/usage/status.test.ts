@@ -4,7 +4,7 @@
 
 import { describe, expect, mock, test } from "bun:test";
 import type { TavilyUsageData } from "../../src/usage/api.js";
-import { TavilyUsageCache } from "../../src/usage/status.js";
+import { UsageCache } from "../../src/usage/status.js";
 
 // ============================================================================
 // Helpers
@@ -33,7 +33,7 @@ const createThrowingFetchUsage = (errorMessage: string) =>
 // Tests
 // ============================================================================
 
-describe("TavilyUsageCache", () => {
+describe("UsageCache", () => {
   describe("fresh API call scenarios", () => {
     test("should set status with usage percentage from fresh API call", async () => {
       const mockCtx = createMockContext();
@@ -46,7 +46,7 @@ describe("TavilyUsageCache", () => {
         keyUsage: 150,
         keyLimit: 1000,
       });
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       await cache.updateStatus(mockCtx, mockFetch);
 
@@ -64,7 +64,7 @@ describe("TavilyUsageCache", () => {
         keyUsage: 0,
         keyLimit: 1000,
       });
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       await cache.updateStatus(mockCtx, mockFetch);
 
@@ -82,7 +82,7 @@ describe("TavilyUsageCache", () => {
         keyUsage: 1000,
         keyLimit: 1000,
       });
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       await cache.updateStatus(mockCtx, mockFetch);
 
@@ -100,7 +100,7 @@ describe("TavilyUsageCache", () => {
         keyUsage: 10,
         keyLimit: 100,
       });
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       await cache.updateStatus(mockCtx, mockFetch);
 
@@ -113,7 +113,7 @@ describe("TavilyUsageCache", () => {
     test("should clear status on fetch error", async () => {
       const mockCtx = createMockContext();
       const mockFetch = createThrowingFetchUsage("API error");
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       await cache.updateStatus(mockCtx, mockFetch);
 
@@ -133,7 +133,7 @@ describe("TavilyUsageCache", () => {
         keyUsage: 150,
         keyLimit: 1000,
       });
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       // First call — should fetch
       await cache.updateStatus(mockCtx, mockFetch);
@@ -163,7 +163,7 @@ describe("TavilyUsageCache", () => {
         keyUsage: 10,
         keyLimit: 100,
       });
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       await cache.updateStatus(mockCtx, mockFetch);
       await cache.updateStatus(mockCtx, mockFetch);
@@ -189,7 +189,7 @@ describe("TavilyUsageCache", () => {
         keyUsage: 10,
         keyLimit: 100,
       });
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       await cache.updateStatus(mockCtx, mockFetch);
 
@@ -205,7 +205,7 @@ describe("TavilyUsageCache", () => {
     test("should clear status on network error", async () => {
       const mockCtx = createMockContext();
       const mockFetch = createThrowingFetchUsage("Network error");
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       await cache.updateStatus(mockCtx, mockFetch);
 
@@ -215,7 +215,7 @@ describe("TavilyUsageCache", () => {
     test("should clear status on API returning 401", async () => {
       const mockCtx = createMockContext();
       const mockFetch = createThrowingFetchUsage("Tavily usage API request failed with status 401");
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       await cache.updateStatus(mockCtx, mockFetch);
 
@@ -225,7 +225,7 @@ describe("TavilyUsageCache", () => {
     test("should not throw errors — catch them silently", async () => {
       const mockCtx = createMockContext();
       const mockFetch = createThrowingFetchUsage("Some error");
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       const result = await cache.updateStatus(mockCtx, mockFetch);
       expect(result).toBeUndefined();
@@ -234,7 +234,7 @@ describe("TavilyUsageCache", () => {
     test("should log error to console on fetch error", async () => {
       const mockCtx = createMockContext();
       const mockFetch = createThrowingFetchUsage("API request failed");
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
       const mockConsoleError = mock(() => {});
       const originalConsoleError = console.error;
 
@@ -267,7 +267,7 @@ describe("TavilyUsageCache", () => {
         keyUsage: 1018,
         keyLimit: 6000,
       });
-      const cache = new TavilyUsageCache("test-api-key");
+      const cache = new UsageCache("test-api-key");
 
       await cache.updateStatus(mockCtx, mockFetch);
 
@@ -279,7 +279,7 @@ describe("TavilyUsageCache", () => {
 describe("TavilyUsageCache.clear", () => {
   test("should clear tavily-usage status", () => {
     const mockCtx = createMockContext();
-    const cache = new TavilyUsageCache("test-api-key");
+    const cache = new UsageCache("test-api-key");
 
     cache.clear(mockCtx);
 
