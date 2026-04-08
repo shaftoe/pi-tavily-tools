@@ -17,7 +17,7 @@ export class TavilyUsageCache {
   private readonly apiKey: string;
   private lastUsage: TavilyUsageData | null = null;
   private lastFetchTime = 0;
-  private static readonly FETCH_COOLDOWN_MS = 30_000;
+  private static readonly FETCH_COOLDOWN_MS = 120_000;
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;
