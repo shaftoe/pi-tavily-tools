@@ -1,3 +1,9 @@
+## [0.5.2](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.1...v0.5.2) (2026-04-08)
+
+### Performance Improvements
+
+- add session-level result cache to avoid redundant extract calls ([#9](https://github.com/shaftoe/pi-tavily-tools/issues/9)) ([6fd1056](https://github.com/shaftoe/pi-tavily-tools/commit/6fd1056a4bdbb108d0df5923c996e6e169641999))
+
 ## [0.5.1](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.0...v0.5.1) (2026-04-08)
 
 ### Bug Fixes
