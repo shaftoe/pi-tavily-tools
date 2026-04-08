@@ -61,9 +61,9 @@
     "release:dry-run": "semantic-release --dry-run"
   },
   "devDependencies": {
-    "@mariozechner/pi-ai": "0.65.2",
-    "@mariozechner/pi-coding-agent": "0.65.2",
-    "@mariozechner/pi-tui": "0.65.2",
+    "@mariozechner/pi-ai": "0.66.0",
+    "@mariozechner/pi-coding-agent": "0.66.0",
+    "@mariozechner/pi-tui": "0.66.0",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/commit-analyzer": "13.0.1",
     "@semantic-release/git": "10.0.1",

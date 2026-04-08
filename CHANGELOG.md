@@ -1,14 +1,12 @@
 # [0.4.0](https://github.com/shaftoe/pi-tavily-tools/compare/v0.3.1...v0.4.0) (2026-04-08)
 
-
 ### Bug Fixes
 
-* forward abort signal, clean temp files, warn on missing API key ([#6](https://github.com/shaftoe/pi-tavily-tools/issues/6)) ([d18529c](https://github.com/shaftoe/pi-tavily-tools/commit/d18529cc8c48ae1575e2405fd89e93233b4ddb7e))
-
+- forward abort signal, clean temp files, warn on missing API key ([#6](https://github.com/shaftoe/pi-tavily-tools/issues/6)) ([d18529c](https://github.com/shaftoe/pi-tavily-tools/commit/d18529cc8c48ae1575e2405fd89e93233b4ddb7e))
 
 ### Features
 
-* add semantic release to automate releases ([ae572b0](https://github.com/shaftoe/pi-tavily-tools/commit/ae572b0c2c2529e8b9abc2b70268390bb226aba8))
+- add semantic release to automate releases ([ae572b0](https://github.com/shaftoe/pi-tavily-tools/commit/ae572b0c2c2529e8b9abc2b70268390bb226aba8))
 
 # Changelog
 
