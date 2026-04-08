@@ -1,3 +1,15 @@
+# [0.5.0](https://github.com/shaftoe/pi-tavily-tools/compare/v0.4.1...v0.5.0) (2026-04-08)
+
+
+### Bug Fixes
+
+* format changelog to make linter happy ([c7987f5](https://github.com/shaftoe/pi-tavily-tools/commit/c7987f547cc91d64475062dc22365311067e54e8))
+
+
+### Features
+
+* increase default max_results from 5 to 8 ([661a995](https://github.com/shaftoe/pi-tavily-tools/commit/661a9957911afcbd170d0318308a56f4653e8dc4))
+
 ## [0.4.1](https://github.com/shaftoe/pi-tavily-tools/compare/v0.4.0...v0.4.1) (2026-04-08)
 
 ### Bug Fixes

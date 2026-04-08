@@ -1,7 +1,7 @@
 {
   "name": "@alexanderfortin/pi-tavily-tools",
   "author": "Alexander Fortin",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "description": "Pi coding agent extension for web search and content extraction using Tavily",
   "keywords": [
     "pi-package",
