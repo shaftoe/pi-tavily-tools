@@ -9,7 +9,43 @@ import type {
   TruncationResult,
 } from "@mariozechner/pi-coding-agent";
 import { describe, expect, mock, test } from "bun:test";
-import { buildToolResult, raceAbort, sendProgress } from "../src/tools/shared/execute.js";
+import {
+  buildToolResult,
+  raceAbort,
+  sanitizeError,
+  sendProgress,
+} from "../src/tools/shared/execute.js";
+
+describe("sanitizeError", () => {
+  test("redacts Tavily API key in error message", () => {
+    const error = new Error("Request failed: tvly-abc123XYZ-secretkey");
+    expect(sanitizeError(error).message).toBe("Request failed: [REDACTED]");
+  });
+
+  test("redacts Authorization header value", () => {
+    const error = new Error("Failed: Authorization: Bearer tvly-secret");
+    expect(sanitizeError(error).message).toBe("Failed: Authorization: [REDACTED]");
+  });
+
+  test("redacts x-api-key header value", () => {
+    const error = new Error("x-api-key: tvly-secret caused failure");
+    expect(sanitizeError(error).message).toBe("x-api-key: [REDACTED]");
+  });
+
+  test("leaves unrelated error messages unchanged", () => {
+    const error = new Error("Network timeout");
+    expect(sanitizeError(error).message).toBe("Network timeout");
+  });
+
+  test("handles non-Error values", () => {
+    expect(sanitizeError("something went wrong").message).toBe("something went wrong");
+    expect(sanitizeError(42).message).toBe("42");
+  });
+
+  test("returns an Error instance", () => {
+    expect(sanitizeError(new Error("test"))).toBeInstanceOf(Error);
+  });
+});
 
 describe("raceAbort", () => {
   test("resolves with promise value when no signal", async () => {

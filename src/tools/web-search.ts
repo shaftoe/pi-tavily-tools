@@ -14,7 +14,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import type { TavilyClient } from "@tavily/core";
 
-import { buildToolResult, raceAbort, sendProgress } from "./shared/execute.js";
+import { buildToolResult, raceAbort, sanitizeError, sendProgress } from "./shared/execute.js";
 import { buildSearchOptions, validateQuery } from "./tavily/client.js";
 import { buildSuccessDetails } from "./tavily/details.js";
 import { extractSearchResults, formatWebSearchResponse } from "./tavily/formatters.js";
@@ -55,7 +55,12 @@ export function registerWebSearchTool(pi: ExtensionAPI, client: TavilyClient): v
 
       sendProgress(onUpdate, `Searching for: ${query}`);
 
-      const response = await raceAbort(client.search(query, searchOptions), signal);
+      let response;
+      try {
+        response = await raceAbort(client.search(query, searchOptions), signal);
+      } catch (error) {
+        throw sanitizeError(error);
+      }
       const { answer, results, images } = extractSearchResults(response);
       const fullOutput = formatWebSearchResponse(
         answer,
