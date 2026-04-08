@@ -1,3 +1,9 @@
+## [0.5.4](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.3...v0.5.4) (2026-04-08)
+
+### Bug Fixes
+
+- relax FETCH_COOLDOWN_MS to 2 minutes ([8b78e32](https://github.com/shaftoe/pi-tavily-tools/commit/8b78e323540f55038874ef12ed188dc1a95f27f2))
+
 ## [0.5.3](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.2...v0.5.3) (2026-04-08)
 
 ### Bug Fixes
