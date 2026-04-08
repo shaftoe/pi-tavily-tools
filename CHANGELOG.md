@@ -1,3 +1,10 @@
+## [0.5.1](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.0...v0.5.1) (2026-04-08)
+
+
+### Bug Fixes
+
+- ensure release process create a clean changelog ([a75777d](https://github.com/shaftoe/pi-tavily-tools/commit/a75777ddc8a31b6357f478e27bb5092e9df9fef3))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
