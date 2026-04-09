@@ -7,6 +7,41 @@
 
 const TAVILY_USAGE_API_URL = "https://api.tavily.com/usage";
 
+/** Default retry-after duration in milliseconds (5 minutes) */
+export const DEFAULT_RETRY_AFTER_MS = 300_000;
+
+// ============================================================================
+// Errors
+// ============================================================================
+
+/** Error thrown when the Tavily usage API rate limit is exceeded */
+export class RateLimitError extends Error {
+  readonly retryAfterMs: number;
+
+  constructor(retryAfterMs: number) {
+    super(`Tavily usage API rate limited; retry after ${retryAfterMs}ms`);
+    this.name = "RateLimitError";
+    this.retryAfterMs = retryAfterMs;
+  }
+}
+
+// ============================================================================
+// Utilities
+// ============================================================================
+
+/**
+ * Parse the HTTP Retry-After header to milliseconds.
+ * Tavily returns the value as decimal integer seconds (e.g., "60").
+ */
+function parseRetryAfter(retryAfterHeader: string | null): number {
+  if (!retryAfterHeader) {
+    return DEFAULT_RETRY_AFTER_MS;
+  }
+
+  const seconds = parseInt(retryAfterHeader.trim(), 10);
+  return isNaN(seconds) ? DEFAULT_RETRY_AFTER_MS : Math.max(seconds * 1000, 0);
+}
+
 // ============================================================================
 // API Types
 // ============================================================================
@@ -78,6 +113,11 @@ export async function getTavilyUsage(apiKey: string): Promise<TavilyUsageData> {
   });
 
   if (!response.ok) {
+    if (response.status === 429) {
+      const retryAfterHeader = response.headers.get("retry-after");
+      const retryAfterMs = parseRetryAfter(retryAfterHeader);
+      throw new RateLimitError(retryAfterMs);
+    }
     throw new Error(`Tavily usage API request failed with status ${response.status}`);
   }
 

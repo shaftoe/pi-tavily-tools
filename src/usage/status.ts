@@ -7,7 +7,7 @@
 
 import type { ExtensionContext } from "@mariozechner/pi-coding-agent";
 import { Temporal } from "temporal-polyfill";
-import { getTavilyUsage, type TavilyUsageData } from "./api.js";
+import { RateLimitError, getTavilyUsage, type TavilyUsageData } from "./api.js";
 
 /** Fetch usage function signature (same as getTavilyUsage for testability) */
 export type FetchUsageFn = (apiKey: string) => Promise<TavilyUsageData>;
@@ -17,6 +17,7 @@ export class UsageCache {
   private readonly apiKey: string;
   private lastUsage: TavilyUsageData | null = null;
   private lastFetchTime = 0;
+  private backoffUntil = 0;
   private static readonly FETCH_COOLDOWN_MS = 120_000;
 
   constructor(apiKey: string) {
@@ -38,27 +39,43 @@ export class UsageCache {
     ctx: ExtensionContext,
     fetchUsage: FetchUsageFn = getTavilyUsage
   ): Promise<void> {
-    try {
-      const now = Temporal.Now.instant().epochMilliseconds;
+    const now = Temporal.Now.instant().epochMilliseconds;
 
-      // Use cached data if still fresh
-      if (
-        this.lastUsage &&
-        this.lastFetchTime &&
-        now - this.lastFetchTime < UsageCache.FETCH_COOLDOWN_MS
-      ) {
+    // Respect rate-limit backoff — use cached data or skip silently
+    if (now < this.backoffUntil) {
+      if (this.lastUsage) {
         this.setStatusFromUsage(ctx, this.lastUsage);
-        return;
       }
+      return;
+    }
 
+    // Use cached data if still fresh
+    if (
+      this.lastUsage &&
+      this.lastFetchTime &&
+      now - this.lastFetchTime < UsageCache.FETCH_COOLDOWN_MS
+    ) {
+      this.setStatusFromUsage(ctx, this.lastUsage);
+      return;
+    }
+
+    try {
       const usage = await fetchUsage(this.apiKey);
       this.lastUsage = usage;
       this.lastFetchTime = now;
 
       this.setStatusFromUsage(ctx, usage);
     } catch (error) {
-      console.error(`Error updating Tavily usage: ${String(error)}`);
-      this.clear(ctx);
+      if (error instanceof RateLimitError) {
+        this.backoffUntil = now + error.retryAfterMs;
+        // Keep last known status instead of clearing
+        if (this.lastUsage) {
+          this.setStatusFromUsage(ctx, this.lastUsage);
+        }
+      } else {
+        console.error(`Error updating Tavily usage: ${String(error)}`);
+        this.clear(ctx);
+      }
     }
   }
 

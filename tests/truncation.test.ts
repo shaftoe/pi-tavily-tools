@@ -4,6 +4,7 @@
 
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { access, mkdir, readFile, rm, stat } from "node:fs/promises";
+import { Temporal } from "temporal-polyfill";
 import { applyTruncation, cleanupTempDir, getTempDir } from "../src/tools/shared/truncation.js";
 
 // ============================================================================
@@ -239,8 +240,9 @@ describe("applyTruncation", () => {
     const match = result.fullOutputPath?.match(/test-tool-(\d+)\.txt$/);
     expect(match).not.toBeNull();
     const timestamp = match ? Number.parseInt(match[1]!, 10) : 0;
-    expect(timestamp).toBeGreaterThan(Date.now() - 10000); // Within last 10 seconds
-    expect(timestamp).toBeLessThanOrEqual(Date.now());
+    const now = Temporal.Now.instant().epochMilliseconds;
+    expect(timestamp).toBeGreaterThan(now - 10000); // Within last 10 seconds
+    expect(timestamp).toBeLessThanOrEqual(now);
   });
 
   test("temp file is in correct directory", async () => {
