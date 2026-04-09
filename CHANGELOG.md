@@ -1,3 +1,9 @@
+## [0.5.5](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.4...v0.5.5) (2026-04-09)
+
+### Bug Fixes
+
+- remove doulbe counting in status when paygo is enabled ([9e4f630](https://github.com/shaftoe/pi-tavily-tools/commit/9e4f63056a887636541ee65e6604a48b58b599ab))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
