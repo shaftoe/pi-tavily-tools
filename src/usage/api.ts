@@ -91,7 +91,7 @@ export async function getTavilyUsage(apiKey: string): Promise<TavilyUsageData> {
     throw new Error("Unexpected Tavily usage API response: missing account plan limit");
   }
 
-  const totalUsage = data.account.plan_usage + (data.account.paygo_usage ?? 0);
+  const totalUsage = data.account.plan_usage;
   const totalLimit = data.account.plan_limit + (data.account.paygo_limit ?? 0);
   const percentage = (totalUsage / (totalLimit || 1)) * 100;
 

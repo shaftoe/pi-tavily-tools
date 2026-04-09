@@ -109,8 +109,8 @@ describe("getTavilyUsage", () => {
   test("should return correct usage data from a valid response", async () => {
     const result = await getTavilyUsage("test-key");
 
-    // (500 + 25) / (15000 + 100) * 100 = 3.477...
-    expect(result.percentage).toBeCloseTo(3.477, 2);
+    // 500 / (15000 + 100) * 100 = 3.311...
+    expect(result.percentage).toBeCloseTo(3.311, 2);
     expect(result.planUsage).toBe(500);
     expect(result.planLimit).toBe(15000);
     expect(result.paygoUsage).toBe(25);
@@ -145,7 +145,8 @@ describe("getTavilyUsage", () => {
 
     const result = await getTavilyUsage("test-key");
 
-    expect(result.percentage).toBe(100);
+    // 15000 / (15000 + 100) * 100 = 99.3377...
+    expect(result.percentage).toBeCloseTo(99.34, 2);
   });
 
   test("should handle plan_limit of 0 without division by zero", async () => {
@@ -284,7 +285,7 @@ describe("getTavilyUsage", () => {
 
     const result = await getTavilyUsage("test-key");
 
-    // (1000 + 250) / (1000 + 1000) * 100 = 62.5%
-    expect(result.percentage).toBe(62.5);
+    // 1000 / (1000 + 1000) * 100 = 50%
+    expect(result.percentage).toBe(50);
   });
 });
