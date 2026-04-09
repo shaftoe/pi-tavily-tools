@@ -1,9 +1,3 @@
-## [0.5.5](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.4...v0.5.5) (2026-04-09)
-
-### Bug Fixes
-
-- remove doulbe counting in status when paygo is enabled ([9e4f630](https://github.com/shaftoe/pi-tavily-tools/commit/9e4f63056a887636541ee65e6604a48b58b599ab))
-
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -12,7 +6,13 @@ This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html) 
 uses [semantic-release](https://semantic-release.gitbook.io/) for automated releases.
 The format is based on [Keep a Changelog](https://keepachangelog.org/en/1.1.0/).
 
-## [unreleased]
+## [Unreleased]
+
+## [0.5.5](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.4...v0.5.5) (2026-04-09)
+
+### Bug Fixes
+
+- remove doulbe counting in status when paygo is enabled ([9e4f630](https://github.com/shaftoe/pi-tavily-tools/commit/9e4f63056a887636541ee65e6604a48b58b599ab))
 
 ## [0.5.4](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.3...v0.5.4) (2026-04-08)
 
