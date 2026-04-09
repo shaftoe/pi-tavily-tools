@@ -9,6 +9,7 @@ import type {
   TruncationResult,
 } from "@mariozechner/pi-coding-agent";
 import { describe, expect, mock, test } from "bun:test";
+import { Temporal } from "temporal-polyfill";
 import {
   buildToolResult,
   raceAbort,
@@ -306,7 +307,7 @@ describe("buildToolResult", () => {
     const result = await buildToolResult<TestDetails>(fullOutput, ctx, toolName, () => ({
       count: 42,
       name: "test",
-      timestamp: Date.now(),
+      timestamp: Temporal.Now.instant().epochMilliseconds,
     }));
 
     expect(result.details.count).toBe(42);

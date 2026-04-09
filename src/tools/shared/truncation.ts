@@ -10,6 +10,7 @@ import {
   withFileMutationQueue,
   type TruncationResult,
 } from "@mariozechner/pi-coding-agent";
+import { Temporal } from "temporal-polyfill";
 
 // ============================================================================
 // Truncation
@@ -54,7 +55,7 @@ export async function applyTruncation(
   // Save full output to temp file if truncated
   if (truncation.truncated) {
     const tempDir = getTempDir(cwd);
-    const timestamp = Date.now();
+    const timestamp = Temporal.Now.instant().epochMilliseconds;
     const tempFile = `${tempDir}/${toolName}-${timestamp}.txt`;
 
     await withFileMutationQueue(tempFile, async () => {

@@ -3,7 +3,12 @@
  */
 
 import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
-import { getTavilyUsage, type TavilyUsageResponse } from "../../src/usage/api.js";
+import {
+  DEFAULT_RETRY_AFTER_MS,
+  RateLimitError,
+  getTavilyUsage,
+  type TavilyUsageResponse,
+} from "../../src/usage/api.js";
 
 const mockUsageResponse: TavilyUsageResponse = {
   key: {
@@ -287,5 +292,82 @@ describe("getTavilyUsage", () => {
 
     // 1000 / (1000 + 1000) * 100 = 50%
     expect(result.percentage).toBe(50);
+  });
+
+  test("should throw RateLimitError when API returns 429 with retry-after header", async () => {
+    mockFetch.mockImplementation(
+      () =>
+        ({
+          ok: false,
+          status: 429,
+          headers: {
+            get: (name: string) => (name === "retry-after" ? "60" : null),
+          },
+        }) as unknown as Response
+    );
+
+    await expect(getTavilyUsage("test-key")).rejects.toThrow(RateLimitError);
+
+    const error = await getTavilyUsage("test-key").catch((e) => e);
+    expect(error).toBeInstanceOf(RateLimitError);
+    expect((error as RateLimitError).retryAfterMs).toBe(60000);
+  });
+
+  test("should throw RateLimitError with default 5-minute backoff when retry-after header is missing", async () => {
+    mockFetch.mockImplementationOnce(
+      () =>
+        ({
+          ok: false,
+          status: 429,
+          headers: {
+            get: () => null,
+          },
+        }) as unknown as Response
+    );
+
+    const error = await getTavilyUsage("test-key").catch((e) => e);
+    expect(error).toBeInstanceOf(RateLimitError);
+    expect((error as RateLimitError).retryAfterMs).toBe(DEFAULT_RETRY_AFTER_MS);
+  });
+
+  test("should parse retry-after header with different values", async () => {
+    const testCases = [
+      { header: "30", expectedMs: 30000 },
+      { header: "60", expectedMs: 60000 },
+      { header: "120", expectedMs: 120000 },
+      { header: "300", expectedMs: DEFAULT_RETRY_AFTER_MS },
+    ];
+
+    for (const { header, expectedMs } of testCases) {
+      mockFetch.mockImplementationOnce(
+        () =>
+          ({
+            ok: false,
+            status: 429,
+            headers: {
+              get: (name: string) => (name === "retry-after" ? header : null),
+            },
+          }) as unknown as Response
+      );
+
+      const error = await getTavilyUsage("test-key").catch((e) => e);
+      expect(error).toBeInstanceOf(RateLimitError);
+      expect((error as RateLimitError).retryAfterMs).toBe(expectedMs);
+    }
+  });
+});
+
+describe("RateLimitError", () => {
+  test("should create error with correct name and message", () => {
+    const error = new RateLimitError(60000);
+
+    expect(error.name).toBe("RateLimitError");
+    expect(error.message).toBe("Tavily usage API rate limited; retry after 60000ms");
+  });
+
+  test("should store retryAfterMs as readonly property", () => {
+    const error = new RateLimitError(120000);
+
+    expect(error.retryAfterMs).toBe(120000);
   });
 });
