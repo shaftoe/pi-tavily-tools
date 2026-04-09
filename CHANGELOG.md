@@ -1,3 +1,9 @@
+## [0.5.6](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.5...v0.5.6) (2026-04-09)
+
+### Bug Fixes
+
+- handle 429 rate limit errors on Tavily usage endpoint ([#13](https://github.com/shaftoe/pi-tavily-tools/issues/13)) ([24304df](https://github.com/shaftoe/pi-tavily-tools/commit/24304dfe9ae5eb30812c789ad63e966ea0e955b5))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
