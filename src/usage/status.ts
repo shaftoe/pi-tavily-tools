@@ -68,6 +68,8 @@ export class UsageCache {
     } catch (error) {
       if (error instanceof RateLimitError) {
         this.backoffUntil = now + error.retryAfterMs;
+        // Update lastFetchTime so cooldown period applies after backoff expires
+        this.lastFetchTime = now;
         // Keep last known status instead of clearing
         if (this.lastUsage) {
           this.setStatusFromUsage(ctx, this.lastUsage);
