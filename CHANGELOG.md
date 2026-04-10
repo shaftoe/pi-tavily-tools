@@ -1,3 +1,9 @@
+## [0.5.7](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.6...v0.5.7) (2026-04-10)
+
+### Bug Fixes
+
+- update lastFetchTime on 429 error to respect cooldown ([#16](https://github.com/shaftoe/pi-tavily-tools/issues/16)) ([662afe4](https://github.com/shaftoe/pi-tavily-tools/commit/662afe4fdf98f00a1700e0aff90dcf0c73c9ee01))
+
 ## [0.5.6](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.5...v0.5.6) (2026-04-09)
 
 ### Bug Fixes
