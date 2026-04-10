@@ -16,7 +16,13 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import type { TavilyClient } from "@tavily/core";
 
 import { resultCache } from "./shared/cache.js";
-import { buildToolResult, raceAbort, sanitizeError, sendProgress } from "./shared/execute.js";
+import {
+  buildToolResult,
+  raceAbort,
+  sanitizeError,
+  sendProgress,
+  withRetry,
+} from "./shared/execute.js";
 import { buildExtractOptions, validateUrls } from "./tavily/client.js";
 import { buildExtractSuccessDetails } from "./tavily/details.js";
 import { extractExtractResults, formatExtractResponse } from "./tavily/formatters.js";
@@ -80,7 +86,14 @@ export function registerWebExtractTool(pi: ExtensionAPI, client: TavilyClient): 
 
       let response;
       try {
-        response = await raceAbort(client.extract(urls, extractOptions), signal);
+        response = await raceAbort(
+          withRetry(() => client.extract(urls, extractOptions), {
+            maxRetries: 3,
+            baseDelayMs: 1000,
+            maxDelayMs: 10000,
+          }),
+          signal
+        );
       } catch (error) {
         throw sanitizeError(error);
       }

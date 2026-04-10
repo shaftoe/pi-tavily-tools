@@ -44,6 +44,65 @@ export function raceAbort<T>(promise: Promise<T>, signal: AbortSignal | undefine
 }
 
 // ============================================================================
+// Rate Limit Error Detection
+// ============================================================================
+
+/** Check if an error is a 429 rate limit error from Tavily */
+export function isRateLimitError(error: unknown): error is Error {
+  if (!(error instanceof Error)) {
+    return false;
+  }
+  const message = error.message;
+  return message.startsWith("429") || message.includes("429");
+}
+
+// ============================================================================
+// Retry with Exponential Backoff
+// ============================================================================
+
+/** Default retry configuration */
+const DEFAULT_MAX_RETRIES = 3;
+const DEFAULT_BASE_DELAY_MS = 1000;
+const DEFAULT_MAX_DELAY_MS = 30000;
+
+/** Configuration for retry logic */
+export interface RetryConfig {
+  maxRetries?: number;
+  baseDelayMs?: number;
+  maxDelayMs?: number;
+}
+
+/**
+ * Execute an async function with exponential backoff retry for rate limit errors.
+ * Only retries on 429 errors; other errors are propagated immediately.
+ */
+export async function withRetry<T>(fn: () => Promise<T>, config: RetryConfig = {}): Promise<T> {
+  const maxRetries = config.maxRetries ?? DEFAULT_MAX_RETRIES;
+  const baseDelayMs = config.baseDelayMs ?? DEFAULT_BASE_DELAY_MS;
+  const maxDelayMs = config.maxDelayMs ?? DEFAULT_MAX_DELAY_MS;
+
+  let lastError: Error | undefined;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+
+      if (!isRateLimitError(error) || attempt === maxRetries) {
+        throw lastError;
+      }
+
+      const delay = Math.min(baseDelayMs * Math.pow(2, attempt) + Math.random() * 500, maxDelayMs);
+
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+
+  throw lastError || new Error("Unknown error occurred during retry");
+}
+
+// ============================================================================
 // Error Sanitization
 // ============================================================================
 
