@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@mariozechner/pi-ai": "0.66.0",
-    "@mariozechner/pi-coding-agent": "0.66.0",
+    "@mariozechner/pi-coding-agent": "0.66.1",
     "@mariozechner/pi-tui": "0.66.0",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/commit-analyzer": "13.0.1",
