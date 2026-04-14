@@ -1,24 +1,21 @@
-## [0.5.7](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.6...v0.5.7) (2026-04-10)
-
-### Bug Fixes
-
-- update lastFetchTime on 429 error to respect cooldown ([#16](https://github.com/shaftoe/pi-tavily-tools/issues/16)) ([662afe4](https://github.com/shaftoe/pi-tavily-tools/commit/662afe4fdf98f00a1700e0aff90dcf0c73c9ee01))
-
-## [0.5.6](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.5...v0.5.6) (2026-04-09)
-
-### Bug Fixes
-
-- handle 429 rate limit errors on Tavily usage endpoint ([#13](https://github.com/shaftoe/pi-tavily-tools/issues/13)) ([24304df](https://github.com/shaftoe/pi-tavily-tools/commit/24304dfe9ae5eb30812c789ad63e966ea0e955b5))
-
 # Changelog
 
 All notable changes to this project will be documented in this file.
 
-This project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html) and
-uses [semantic-release](https://semantic-release.gitbook.io/) for automated releases.
-The format is based on [Keep a Changelog](https://keepachangelog.org/en/1.1.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.5.8] - 2026-04-14
+
+### Changed
+
+- **deps**: update all deps to latest
+
+### Fixed
+
+- bump release
 
 ## [0.5.5](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.4...v0.5.5) (2026-04-09)
 
@@ -114,3 +111,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.org/en/1.1.0/).
 ### Added
 
 - Initial release with `web_search` tool using Tavily
+
+[0.5.8]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.7...v0.5.8
