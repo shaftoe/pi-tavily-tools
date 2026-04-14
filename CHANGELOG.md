@@ -11,74 +11,106 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **deps**: update all deps to latest
+- update all deps to latest
 
 ### Fixed
 
 - bump release
 
-## [0.5.5](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.4...v0.5.5) (2026-04-09)
+## [0.5.7] - 2026-04-10
 
-### Bug Fixes
+### Fixed
 
-- remove doulbe counting in status when paygo is enabled ([9e4f630](https://github.com/shaftoe/pi-tavily-tools/commit/9e4f63056a887636541ee65e6604a48b58b599ab))
+- update lastFetchTime on 429 error to respect cooldown
 
-## [0.5.4](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.3...v0.5.4) (2026-04-08)
+## [0.5.6] - 2026-04-09
 
-### Bug Fixes
+### Changed
 
-- relax FETCH_COOLDOWN_MS to 2 minutes ([8b78e32](https://github.com/shaftoe/pi-tavily-tools/commit/8b78e323540f55038874ef12ed188dc1a95f27f2))
+- trim agents
 
-## [0.5.3](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.2...v0.5.3) (2026-04-08)
+### Fixed
 
-### Bug Fixes
+- handle 429 rate limit errors on Tavily usage endpoint
 
-- ensure default max result is consistent ([deaaaeb](https://github.com/shaftoe/pi-tavily-tools/commit/deaaaeba17f846cf34ac88bde04a0ba645264c80))
+## [0.5.5] - 2026-04-09
 
-## [0.5.2](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.1...v0.5.2) (2026-04-08)
+### Changed
 
-### Performance Improvements
+- extract temp dir helpers and rename TavilyUsageCache to UsageCache
 
-- add session-level result cache to avoid redundant extract calls ([#9](https://github.com/shaftoe/pi-tavily-tools/issues/9)) ([6fd1056](https://github.com/shaftoe/pi-tavily-tools/commit/6fd1056a4bdbb108d0df5923c996e6e169641999))
+### Fixed
 
-## [0.5.1](https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.0...v0.5.1) (2026-04-08)
+- remove double counting in status when paygo is enabled
 
-### Bug Fixes
+## [0.5.4] - 2026-04-08
 
-- ensure release process create a clean changelog ([a75777d](https://github.com/shaftoe/pi-tavily-tools/commit/a75777ddc8a31b6357f478e27bb5092e9df9fef3))
+### Fixed
 
-## [0.5.0](https://github.com/shaftoe/pi-tavily-tools/compare/v0.4.1...v0.5.0) (2026-04-08)
+- relax FETCH_COOLDOWN_MS to 2 minutes
 
-### Bug Fixes
+## [0.5.3] - 2026-04-08
 
-- format changelog to make linter happy ([c7987f5](https://github.com/shaftoe/pi-tavily-tools/commit/c7987f547cc91d64475062dc22365311067e54e8))
+### Changed
 
-### Features
+- fix the changelog
+- add barrel imports for usage
 
-- increase default max_results from 5 to 8 ([661a995](https://github.com/shaftoe/pi-tavily-tools/commit/661a9957911afcbd170d0318308a56f4653e8dc4))
+### Fixed
 
-## [0.4.1](https://github.com/shaftoe/pi-tavily-tools/compare/v0.4.0...v0.4.1) (2026-04-08)
+- ensure default max result is consistent
 
-### Bug Fixes
+## [0.5.2] - 2026-04-08
 
-- sanitize provider errors to prevent credential leakage ([#7](https://github.com/shaftoe/pi-tavily-tools/issues/7)) ([792a0a2](https://github.com/shaftoe/pi-tavily-tools/commit/792a0a28dcfb8e82a2711db16c492769b1361504))
+### Changed
 
-## [0.4.0](https://github.com/shaftoe/pi-tavily-tools/compare/v0.3.1...v0.4.0) (2026-04-08)
+- add session-level result cache to avoid redundant extract calls
 
-### Bug Fixes
+## [0.5.1] - 2026-04-08
 
-- forward abort signal, clean temp files, warn on missing API key ([#6](https://github.com/shaftoe/pi-tavily-tools/issues/6)) ([d18529c](https://github.com/shaftoe/pi-tavily-tools/commit/d18529cc8c48ae1575e2405fd89e93233b4ddb7e))
+### Fixed
 
-### Features
+- ensure release process create a clean changelog
 
-- add semantic release to automate releases ([ae572b0](https://github.com/shaftoe/pi-tavily-tools/commit/ae572b0c2c2529e8b9abc2b70268390bb226aba8))
+## [0.5.0] - 2026-04-08
+
+### Added
+
+- increase default max_results from 5 to 8
+
+### Fixed
+
+- format changelog to make linter happy
+
+## [0.4.1] - 2026-04-08
+
+### Changed
+
+- update Pi deps to v0.66.0
+
+### Fixed
+
+- sanitize provider errors to prevent credential leakage
+
+## [0.4.0] - 2026-04-08
+
+### Added
+
+- add semantic release to automate releases
+
+### Fixed
+
+- forward abort signal, clean temp files, warn on missing API key
 
 ## [0.3.1] - 2026-04-06
 
 ### Changed
 
-- fixed wrong calculation for status, now also includes paygo data
 - bump Pi deps to latest
+
+### Fixed
+
+- include paygo into status percentage calculation
 
 ## [0.3.0] - 2026-04-05
 
@@ -86,30 +118,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - add Tavily quota usage to footer
 - CI workflow for Pi
-- add CHANGELOG.md (this file)
+- add CHANGELOG.md
 
 ## [0.2.0] - 2026-04-05
 
 ### Added
 
-- `web_extract` tool for extracting raw content from URLs using Tavily
+- add `web_extract` tool for extracting raw content from URLs using Tavily
 
 ## [0.1.2] - 2026-04-05
 
 ### Changed
 
-- Refactor: split web search execute function
+- split web search execute function
 
 ## [0.1.1] - 2026-04-05
 
 ### Changed
 
-- Bump version to v0.1.1 to test NPM publishing workflow
+- bump version to v0.1.1 to test NPM publishing workflow
 
-## [0.1.0] - 2026-04-04
+## [0.1.0] - 2026-04-05
 
 ### Added
 
 - Initial release with `web_search` tool using Tavily
 
+[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.8...HEAD
 [0.5.8]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.7...v0.5.8
+[0.5.7]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.6...v0.5.7
+[0.5.6]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.5...v0.5.6
+[0.5.5]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.4...v0.5.5
+[0.5.4]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.3...v0.5.4
+[0.5.3]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.2...v0.5.3
+[0.5.2]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.1...v0.5.2
+[0.5.1]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.0...v0.5.1
+[0.5.0]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.4.1...v0.5.0
+[0.4.1]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.4.0...v0.4.1
+[0.4.0]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.3.1...v0.4.0
+[0.4.0]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.3.1...v0.4.0
+[0.3.1]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.1.2...v0.2.0
+[0.1.2]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/shaftoe/pi-tavily-tools/releases/tag/v0.1.0
