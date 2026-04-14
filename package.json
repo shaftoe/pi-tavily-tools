@@ -61,6 +61,7 @@
     "release:dry-run": "semantic-release --dry-run"
   },
   "devDependencies": {
+    "@alexanderfortin/semantic-release-keep-a-changelog": "0.2.0",
     "@mariozechner/pi-ai": "0.67.1",
     "@mariozechner/pi-coding-agent": "0.67.1",
     "@mariozechner/pi-tui": "0.67.1",

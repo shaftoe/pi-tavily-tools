@@ -9,25 +9,7 @@ export default {
   branches: ["master"],
   plugins: [
     "@semantic-release/commit-analyzer",
-    "@semantic-release/release-notes-generator",
-    [
-      "@semantic-release/changelog",
-      {
-        changelogFile: "CHANGELOG.md",
-      },
-    ],
-    [
-      "@semantic-release/npm",
-      {
-        npmPublish: true,
-      },
-    ],
-    [
-      "@semantic-release/exec",
-      {
-        prepareCmd: "bun run format:fix && bun run lint:fix",
-      },
-    ],
+    "@alexanderfortin/semantic-release-keep-a-changelog",
     [
       "@semantic-release/git",
       {
