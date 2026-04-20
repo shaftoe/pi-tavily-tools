@@ -64,7 +64,7 @@
     "@alexanderfortin/semantic-release-keep-a-changelog": "0.2.0",
     "@mariozechner/pi-ai": "0.67.1",
     "@mariozechner/pi-coding-agent": "0.67.1",
-    "@mariozechner/pi-tui": "0.67.1",
+    "@mariozechner/pi-tui": "0.67.68",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/commit-analyzer": "13.0.1",
     "@semantic-release/exec": "7.1.0",
