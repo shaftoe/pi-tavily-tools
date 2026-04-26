@@ -107,9 +107,9 @@ export function buildExtractSuccessDetails(input: ExtractSuccessDetailsInput): W
 
   return {
     urlCount: input.urlCount,
-    extractDepth: defaults.extractDepth as "basic" | "advanced",
+    extractDepth: defaults.extractDepth,
     includeImages: defaults.includeImages,
-    format: defaults.format as "markdown" | "text",
+    format: defaults.format,
     query: input.options.query,
     successCount: input.results.length,
     failureCount: input.failedResults.length,
