@@ -59,11 +59,13 @@ describe("WebSearchParamsSchema", () => {
     expect(properties.search_depth).toBeDefined();
   });
 
-  test("search_depth is a StringEnum with correct values", () => {
+  test("search_depth is a Union of Literal values", () => {
     const properties = WebSearchParamsSchema.properties as Record<string, unknown>;
-    const searchDepthSchema = properties.search_depth as { type: string; enum?: string[] };
-    expect(searchDepthSchema.type).toBe("string");
-    expect(searchDepthSchema.enum).toEqual(["basic", "advanced"]);
+    const searchDepthSchema = properties.search_depth as {
+      anyOf?: { const: string }[];
+    };
+    expect(searchDepthSchema.anyOf).toBeDefined();
+    expect(searchDepthSchema.anyOf!.map((v) => v.const)).toEqual(["basic", "advanced"]);
   });
 
   test("search_depth has description", () => {
@@ -192,13 +194,12 @@ describe("BaseSearchParamsSchema", () => {
     expect(BaseSearchParamsSchema.search_depth).toBeDefined();
   });
 
-  test("search_depth has correct enum values", () => {
+  test("search_depth is a Union of Literal values", () => {
     const searchDepthSchema = BaseSearchParamsSchema.search_depth as unknown as {
-      type: string;
-      enum?: string[];
+      anyOf?: { const: string }[];
     };
-    expect(searchDepthSchema.type).toBe("string");
-    expect(searchDepthSchema.enum).toEqual(["basic", "advanced"]);
+    expect(searchDepthSchema.anyOf).toBeDefined();
+    expect(searchDepthSchema.anyOf!.map((v) => v.const)).toEqual(["basic", "advanced"]);
   });
 
   test("search_depth has description", () => {
