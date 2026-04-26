@@ -272,7 +272,7 @@ function renderSearchResultCommon(
     );
 
     // Show options
-    text += renderOptionsBadge(details, theme as ExtendedTheme);
+    text += renderOptionsBadge(details, theme);
 
     // Show truncation warning
     if (details.truncation?.truncated) {

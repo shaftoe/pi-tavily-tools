@@ -2,7 +2,6 @@
  * Schemas for Tavily tools
  */
 
-import { StringEnum } from "@mariozechner/pi-ai";
 import { Type } from "@sinclair/typebox";
 import { DEFAULT_MAX_RESULTS } from "./client.js";
 
@@ -16,7 +15,7 @@ export const WebSearchParamsSchema = Type.Object({
   query: Type.String({ description: "Search query string" }),
   max_results: Type.Optional(Type.Number({ description: maxResultsDescription })),
   search_depth: Type.Optional(
-    StringEnum(["basic", "advanced"] as const, {
+    Type.Union([Type.Literal("basic"), Type.Literal("advanced")], {
       description: "Search depth: 'basic' or 'advanced' (default: 'basic')",
     })
   ),
@@ -43,7 +42,7 @@ export const WebExtractParamsSchema = Type.Object({
     description: "Array of URLs to extract content from (max 20)",
   }),
   extract_depth: Type.Optional(
-    StringEnum(["basic", "advanced"] as const, {
+    Type.Union([Type.Literal("basic"), Type.Literal("advanced")], {
       description: "Extraction depth: 'basic' or 'advanced' (default: 'basic')",
     })
   ),
@@ -51,7 +50,7 @@ export const WebExtractParamsSchema = Type.Object({
     Type.Boolean({ description: "Include images from pages (default: false)" })
   ),
   format: Type.Optional(
-    StringEnum(["markdown", "text"] as const, {
+    Type.Union([Type.Literal("markdown"), Type.Literal("text")], {
       description: "Output format: 'markdown' or 'text' (default: 'markdown')",
     })
   ),
@@ -68,7 +67,7 @@ export const BaseSearchParamsSchema = {
   query: Type.String({ description: "Search query string" }),
   max_results: Type.Optional(Type.Number({ description: maxResultsDescription })),
   search_depth: Type.Optional(
-    StringEnum(["basic", "advanced"] as const, {
+    Type.Union([Type.Literal("basic"), Type.Literal("advanced")], {
       description: "Search depth: 'basic' or 'advanced' (default: 'basic')",
     })
   ),
