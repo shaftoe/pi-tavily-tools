@@ -5,7 +5,7 @@
  * with caching to avoid excessive API calls.
  */
 
-import type { ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { Temporal } from "temporal-polyfill";
 import { RateLimitError, getTavilyUsage, type TavilyUsageData } from "./api.js";
 

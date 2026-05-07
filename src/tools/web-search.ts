@@ -11,7 +11,7 @@
  * - Robust error handling
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import type { TavilyClient } from "@tavily/core";
 
 import { resultCache } from "./shared/cache.js";

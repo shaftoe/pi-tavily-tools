@@ -2,7 +2,7 @@
  * Unit tests for main extension entry point
  */
 
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
 
 describe("Extension entry point", () => {

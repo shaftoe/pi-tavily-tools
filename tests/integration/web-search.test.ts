@@ -5,7 +5,7 @@
  * Tests are skipped if TAVILY_API_KEY is not set.
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { beforeAll, describe, expect, test } from "bun:test";
 import { createTavilyClient } from "../../src/tools/tavily/client.js";
 import { registerWebSearchTool } from "../../src/tools/web-search.js";

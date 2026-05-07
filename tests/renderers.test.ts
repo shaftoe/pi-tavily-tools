@@ -2,7 +2,7 @@
  * Unit tests for Tavily TUI renderers
  */
 
-import type { Text } from "@mariozechner/pi-tui";
+import type { Text } from "@earendil-works/pi-tui";
 import { describe, expect, test } from "bun:test";
 import { DEFAULT_MAX_RESULTS } from "../src/tools/tavily/client.js";
 import { renderWebSearchCall, renderWebSearchResult } from "../src/tools/tavily/renderers.js";

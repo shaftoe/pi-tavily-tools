@@ -5,7 +5,7 @@
  * without making real API calls.
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { beforeEach, describe, expect, test } from "bun:test";
 import { resultCache } from "../src/tools/shared/cache.js";
 import { registerWebSearchTool } from "../src/tools/web-search.js";

@@ -155,7 +155,7 @@ describe("WebSearchParamsSchema", () => {
   });
 
   // Note: Runtime validation tests with TypeCompiler are skipped because
-  // StringEnum from @mariozechner/pi-ai may not be a standard TypeBox schema
+  // StringEnum from @earendil-works/pi-ai may not be a standard TypeBox schema
   // that TypeCompiler can compile. Schema structure tests are sufficient here.
 });
 

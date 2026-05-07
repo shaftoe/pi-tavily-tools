@@ -2,7 +2,7 @@
  * TUI renderers for Tavily tools
  */
 
-import { Text, truncateToWidth } from "@mariozechner/pi-tui";
+import { Text, truncateToWidth } from "@earendil-works/pi-tui";
 import { DEFAULT_MAX_RESULTS } from "./client.js";
 import type { SearchResponseDetails, WebExtractDetails, WebSearchDetails } from "./types.js";
 

@@ -9,7 +9,7 @@ import {
   truncateHead,
   withFileMutationQueue,
   type TruncationResult,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import { Temporal } from "temporal-polyfill";
 
 // ============================================================================

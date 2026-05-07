@@ -7,7 +7,7 @@ import type {
   ExtensionContext,
   SessionEntry,
   TruncationResult,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import { describe, expect, mock, test } from "bun:test";
 import { Temporal } from "temporal-polyfill";
 import {
