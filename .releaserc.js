@@ -10,6 +10,7 @@ export default {
   plugins: [
     "@semantic-release/commit-analyzer",
     "@alexanderfortin/semantic-release-keep-a-changelog",
+    "@semantic-release/npm",
     [
       "@semantic-release/git",
       {
