@@ -8,7 +8,14 @@
 export default {
   branches: ["master"],
   plugins: [
-    "@semantic-release/commit-analyzer",
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        releaseRules: [
+          { type: "chore", scope: "deps", release: "patch" },
+        ],
+      },
+    ],
     "@alexanderfortin/semantic-release-keep-a-changelog",
     "@semantic-release/npm",
     [
