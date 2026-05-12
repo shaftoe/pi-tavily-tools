@@ -11,9 +11,7 @@ export default {
     [
       "@semantic-release/commit-analyzer",
       {
-        releaseRules: [
-          { type: "chore", scope: "deps", release: "patch" },
-        ],
+        releaseRules: [{ type: "chore", scope: "deps", release: "patch" }],
       },
     ],
     "@alexanderfortin/semantic-release-keep-a-changelog",
