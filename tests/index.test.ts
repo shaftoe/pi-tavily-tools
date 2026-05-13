@@ -114,8 +114,8 @@ describe("Extension entry point", () => {
     } as unknown as ExtensionContext;
 
     // All handlers should accept (event, ctx) without throwing
-    expect(handlers["session_start"]!({}, ctx)).toBeUndefined();
-    expect(handlers["turn_end"]!({}, ctx)).toBeUndefined();
-    expect(handlers["session_shutdown"]!({}, ctx)).resolves.toBeUndefined();
+    await expect(Promise.resolve(handlers["session_start"]!({}, ctx))).resolves.toBeUndefined();
+    await expect(Promise.resolve(handlers["turn_end"]!({}, ctx))).resolves.toBeUndefined();
+    await expect(Promise.resolve(handlers["session_shutdown"]!({}, ctx))).resolves.toBeUndefined();
   });
 });
