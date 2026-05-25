@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.16] - 2026-05-25
+
+### Fixed
+
+- prevent status update from blocking pi startup (#50)
+
 ## [0.5.15] - 2026-05-22
 
 ### Changed
@@ -192,7 +198,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release with `web_search` tool using Tavily
 
-[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.15...HEAD
+[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.16...HEAD
+[0.5.16]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.15...v0.5.16
 [0.5.15]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.14...v0.5.15
 [0.5.14]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.13...v0.5.14
 [0.5.13]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.12...v0.5.13
