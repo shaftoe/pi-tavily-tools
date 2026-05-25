@@ -38,7 +38,7 @@ export default function (pi: ExtensionAPI): void {
   let registered = false;
   const usageCache = new UsageCache(apiKey);
 
-  pi.on("session_start", async (_event, ctx) => {
+  pi.on("session_start", (_event, ctx) => {
     resultCache.clear();
 
     if (registered) return;
@@ -48,11 +48,12 @@ export default function (pi: ExtensionAPI): void {
     registerWebSearchTool(pi, client);
     registerWebExtractTool(pi, client);
 
-    await usageCache.updateStatus(ctx);
+    // Fire-and-forget: usage footer is cosmetic, must not block session startup
+    usageCache.updateStatus(ctx).catch(() => {});
   });
 
-  pi.on("turn_end", async (_event, ctx) => {
-    await usageCache.updateStatus(ctx);
+  pi.on("turn_end", (_event, ctx) => {
+    usageCache.updateStatus(ctx).catch(() => {});
   });
 
   pi.on("session_shutdown", async (_event, ctx) => {
