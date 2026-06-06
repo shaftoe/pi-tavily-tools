@@ -61,7 +61,7 @@
     "release:dry-run": "semantic-release --dry-run"
   },
   "devDependencies": {
-    "@alexanderfortin/semantic-release-keep-a-changelog": "^0.3.0",
+    "@alexanderfortin/semantic-release-keep-a-changelog": "^0.4.0",
     "@earendil-works/pi-ai": "0.74.0",
     "@earendil-works/pi-coding-agent": "0.74.0",
     "@earendil-works/pi-tui": "0.74.0",
@@ -74,7 +74,7 @@
     "@semantic-release/release-notes-generator": "14.1.1",
     "@sinclair/typebox": "0.34.49",
     "@types/bun": "1.3.14",
-    "@types/node": "25.9.1",
+    "@types/node": "^25.9.2",
     "@typescript-eslint/eslint-plugin": "^8.60.1",
     "@typescript-eslint/parser": "^8.60.1",
     "eslint": "10.4.1",
