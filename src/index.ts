@@ -7,6 +7,7 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { AuthStorage } from "@earendil-works/pi-coding-agent";
 import {
   cleanupTempDir,
   createTavilyClient,
@@ -19,18 +20,26 @@ import { UsageCache } from "./usage/index.js";
 /**
  * Main extension entry point.
  *
- * Requires TAVILY_API_KEY to be set — if missing, no hooks are registered
- * and the extension is effectively a no-op.
+ * Resolves API key from AuthStorage under key "tavily" first,
+ * falling back to TAVILY_API_KEY environment variable.
+ *
+ * If neither is available, no hooks are registered and the extension
+ * is effectively a no-op.
  *
  * Defers tool registration to `session_start` so Pi can start
- * even if the TAVILY_API_KEY is missing. The tool is registered only
+ * even if the API key is missing. The tool is registered only
  * once on the first agent run and persists across sessions.
  */
-export default function (pi: ExtensionAPI): void {
-  const apiKey = process.env.TAVILY_API_KEY?.trim();
+export default async function (pi: ExtensionAPI): Promise<void> {
+  const authStorage = AuthStorage.create();
+  const apiKey = (await authStorage.getApiKey("tavily")) ?? process.env.TAVILY_API_KEY?.trim();
+
   if (!apiKey) {
     pi.on("session_start", (_event, ctx) => {
-      ctx.ui.notify("Web Search · TAVILY_API_KEY not set. Get a free key at tavily.com", "warning");
+      ctx.ui.notify(
+        'Web Search · API key not found. Add to ~/.pi/agent/auth.json under "tavily" key or set TAVILY_API_KEY env var. Get a free key at tavily.com',
+        "warning"
+      );
     });
     return;
   }
