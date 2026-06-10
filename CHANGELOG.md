@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-06-10
+
+### Added
+
+- Support Pi AuthStorage for TAVILY_API_KEY (#67)
+
+### Changed
+
+- **deps-dev**: update dependencies (#63)
+
 ## [0.5.18] - 2026-06-03
 
 ### Changed
@@ -210,7 +220,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release with `web_search` tool using Tavily
 
-[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.18...HEAD
+[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.18...v0.6.0
 [0.5.18]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.17...v0.5.18
 [0.5.17]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.16...v0.5.17
 [0.5.16]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.15...v0.5.16
