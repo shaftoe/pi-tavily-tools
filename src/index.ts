@@ -32,7 +32,8 @@ import { UsageCache } from "./usage/index.js";
  */
 export default async function (pi: ExtensionAPI): Promise<void> {
   const authStorage = AuthStorage.create();
-  const apiKey = (await authStorage.getApiKey("tavily")) ?? process.env.TAVILY_API_KEY?.trim();
+  const apiKey =
+    (await authStorage.getApiKey("tavily"))?.trim() ?? process.env.TAVILY_API_KEY?.trim();
 
   if (!apiKey) {
     pi.on("session_start", (_event, ctx) => {
