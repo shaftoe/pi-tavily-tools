@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-06-14
+
+### Changed
+
+- **deps-ci**: bump codecov/codecov-action from 6 to 7 (#64)
+- **deps**: update dependencies (#65)
+
 ## [0.6.0] - 2026-06-10
 
 ### Added
@@ -220,7 +227,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release with `web_search` tool using Tavily
 
-[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.6.0...HEAD
+[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.6.0...v0.6.1
 [0.6.0]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.18...v0.6.0
 [0.5.18]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.17...v0.5.18
 [0.5.17]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.5.16...v0.5.17
