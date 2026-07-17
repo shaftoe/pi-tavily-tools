@@ -6,8 +6,7 @@
  * information, recent news, documentation, and time-sensitive data.
  */
 
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { AuthStorage } from "@earendil-works/pi-coding-agent";
+import { readStoredCredential, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import {
   cleanupTempDir,
   createTavilyClient,
@@ -20,7 +19,7 @@ import { UsageCache } from "./usage/index.js";
 /**
  * Main extension entry point.
  *
- * Resolves API key from AuthStorage under key "tavily" first,
+ * Resolves API key from the stored "tavily" credential in auth.json first,
  * falling back to TAVILY_API_KEY environment variable.
  *
  * If neither is available, no hooks are registered and the extension
@@ -30,10 +29,10 @@ import { UsageCache } from "./usage/index.js";
  * even if the API key is missing. The tool is registered only
  * once on the first agent run and persists across sessions.
  */
-export default async function (pi: ExtensionAPI): Promise<void> {
-  const authStorage = AuthStorage.create();
-  const apiKey =
-    (await authStorage.getApiKey("tavily"))?.trim() ?? process.env.TAVILY_API_KEY?.trim();
+export default function (pi: ExtensionAPI): void {
+  const credential = readStoredCredential("tavily");
+  const storedKey = credential?.type === "api_key" ? credential.key : undefined;
+  const apiKey = storedKey?.trim() ?? process.env.TAVILY_API_KEY?.trim();
 
   if (!apiKey) {
     pi.on("session_start", (_event, ctx) => {
