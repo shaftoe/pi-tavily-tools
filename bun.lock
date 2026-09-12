@@ -5,7 +5,7 @@
     "": {
       "name": "pi-tavily-tools",
       "dependencies": {
-        "@tavily/core": "0.7.9",
+        "@tavily/core": "0.7.10",
         "temporal-polyfill": "1.0.4",
       },
       "devDependencies": {
@@ -325,7 +325,7 @@
 
     "@stablelib/base64": ["@stablelib/base64@1.0.1", "", {}, "sha512-1bnPQqSxSuc3Ii6MhBysoWCg58j97aUjuCSZrGSmDxNqtytIi0k8utUenAwTZN4V5mXXYGsVUI9zeBqy+jBOSQ=="],
 
-    "@tavily/core": ["@tavily/core@0.7.9", "", { "dependencies": { "axios": "^1.7.7", "https-proxy-agent": "^7.0.6", "js-tiktoken": "^1.0.14" } }, "sha512-ftOhGU0Bmatc4REwmgMyP28BNdEab6iZ1WiVjzrzDdCVxRoNLhVRp+yhEJ6Kl0OIo6wwjP2l4FWIFOakn7J16w=="],
+    "@tavily/core": ["@tavily/core@0.7.10", "", { "dependencies": { "axios": "^1.7.7", "https-proxy-agent": "^7.0.6", "js-tiktoken": "^1.0.14" } }, "sha512-7MBBILPU+9GLKlpnwZN5HUGLlkX9Ata+8UKTMDD7ehxHxj0cP0RWQsrlPLmqZlROohK2a4zyCedMUVlKQDVI4g=="],
 
     "@types/bun": ["@types/bun@1.4.2", "", { "dependencies": { "bun-types": "1.4.2" } }, "sha512-GimotNn7+ZV0uVArItBbriZsR1oNf0+WTzPkdcFrzShI7k2norL0uzEaJT8T33dWr7O/c9ZDuAFQrctKCi72oQ=="],
 
