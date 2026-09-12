@@ -74,7 +74,7 @@
     "@semantic-release/release-notes-generator": "14.1.1",
     "@sinclair/typebox": "0.34.49",
     "@types/bun": "^1.4.2",
-    "@types/node": "^26.5.0",
+    "@types/node": "^22.20.2",
     "@typescript-eslint/eslint-plugin": "^8.70.0",
     "@typescript-eslint/parser": "^8.70.0",
     "eslint": "10.10.0",
@@ -85,7 +85,7 @@
     "typescript": "6"
   },
   "dependencies": {
-    "@tavily/core": "0.7.10",
-    "temporal-polyfill": "1.0.4"
+    "@tavily/core": "^0.7.11",
+    "temporal-polyfill": "^1.0.5"
   }
 }
