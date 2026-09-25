@@ -2,9 +2,9 @@
  * Unit tests for applyTruncation function
  */
 
-import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { access, mkdir, readFile, rm, stat } from "node:fs/promises";
 import { Temporal } from "temporal-polyfill";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { applyTruncation, cleanupTempDir, getTempDir } from "../src/tools/shared/truncation.js";
 
 // ============================================================================
@@ -214,7 +214,7 @@ describe("applyTruncation", () => {
     // Verify file contains full content
     // Note: We can't easily read the file to compare due to timing,
     // but we can verify it exists and has content
-    const fileStat = await Bun.file(result.fullOutputPath!).stat();
+    const fileStat = await stat(result.fullOutputPath!);
     expect(fileStat.size).toBeGreaterThan(0);
   });
 

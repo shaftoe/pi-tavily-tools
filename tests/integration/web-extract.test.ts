@@ -6,7 +6,7 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { beforeAll, describe, expect, test } from "bun:test";
+import { beforeAll, describe, expect, test } from "vitest";
 import { createTavilyClient } from "../../src/tools/tavily/client.js";
 import { registerWebExtractTool } from "../../src/tools/web-extract.js";
 

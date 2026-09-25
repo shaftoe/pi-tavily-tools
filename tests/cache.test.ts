@@ -2,7 +2,7 @@
  * Unit tests for session-level result cache
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { resultCache } from "../src/tools/shared/cache.js";
 
 describe("resultCache", () => {

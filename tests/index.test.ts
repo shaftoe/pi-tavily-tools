@@ -3,10 +3,10 @@
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 // Real module namespace, used to build a faithful mock that overrides only
-// readStoredCredential. Loaded before any mock.module() call.
+// readStoredCredential. Loaded before any vi.doMock() call.
 const piCodingAgentExports = await import("@earendil-works/pi-coding-agent");
 
 // `Credential` is not re-exported by pi-coding-agent's public entry, so derive
@@ -16,7 +16,7 @@ type StoredCredential = NonNullable<
 >;
 
 // Mock for readStoredCredential — returns a stored api_key credential or undefined
-let mockReadStoredCredential = mock(
+let mockReadStoredCredential = vi.fn(
   (_providerId?: string) => undefined as StoredCredential | undefined
 );
 
@@ -24,15 +24,15 @@ function createMockPi(
   capturedHandlers: Record<string, (...args: unknown[]) => unknown> = {}
 ): ExtensionAPI {
   return {
-    on: mock((event: string, handler: (...args: unknown[]) => unknown) => {
+    on: vi.fn((event: string, handler: (...args: unknown[]) => unknown) => {
       capturedHandlers[event] = handler;
     }) as unknown as ExtensionAPI["on"],
-    registerTool: mock(() => {}),
+    registerTool: vi.fn(() => {}),
   } as unknown as ExtensionAPI;
 }
 
 function mockPiCodingAgent(): void {
-  mock.module("@earendil-works/pi-coding-agent", () => ({
+  vi.doMock("@earendil-works/pi-coding-agent", () => ({
     ...piCodingAgentExports,
     readStoredCredential: mockReadStoredCredential,
   }));
@@ -130,7 +130,7 @@ describe("Extension entry point", () => {
     // Call session_start handler twice — the second call should be a no-op
     const ctx: ExtensionContext = {
       cwd: "/tmp",
-      ui: { setStatus: mock(() => {}), theme: { fg: (_c: string, t: string) => t } },
+      ui: { setStatus: vi.fn(() => {}), theme: { fg: (_c: string, t: string) => t } },
     } as unknown as ExtensionContext;
     await handlers["session_start"]!({}, ctx);
     await handlers["session_start"]!({}, ctx);
@@ -154,7 +154,7 @@ describe("Extension entry point", () => {
 
     const ctx: ExtensionContext = {
       cwd: "/tmp",
-      ui: { setStatus: mock(() => {}), theme: { fg: (_c: string, t: string) => t } },
+      ui: { setStatus: vi.fn(() => {}), theme: { fg: (_c: string, t: string) => t } },
     } as unknown as ExtensionContext;
 
     // All handlers should accept (event, ctx) without throwing

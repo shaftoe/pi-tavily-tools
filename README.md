@@ -397,7 +397,7 @@ Error: Maximum 20 URLs allowed
 ```
 pi-tavily-tools/
 ├── .github/
-│   └── dependabot.yml    # Dependency update configuration
+│   └── renovate.json      # Dependency update configuration
 ├── .envrc                # Direnv configuration for API keys
 ├── .gitignore
 ├── .prettierignore
@@ -405,7 +405,8 @@ pi-tavily-tools/
 ├── AGENTS.md             # Project guidelines for Pi agents
 ├── LICENSE
 ├── README.md
-├── bun.lock
+├── pnpm-lock.yaml       # PNPM lockfile
+├── vitest.config.ts     # Vitest test runner config
 ├── eslint.config.js      # ESLint linting config
 ├── lefthook.yml          # Git hooks configuration
 ├── package.json          # Package manifest
@@ -443,43 +444,43 @@ pi-tavily-tools/
 ### Running Type Checks
 
 ```bash
-bun run check
+pnpm run check
 ```
 
 Watch mode for instant feedback during development:
 
 ```bash
-bun run check:watch
+pnpm run check:watch
 ```
 
 ### Running Tests
 
 ```bash
-bun run test
+pnpm run test
 ```
 
 Watch mode for continuous testing:
 
 ```bash
-bun run test:watch
+pnpm run test:watch
 ```
 
 Run only integration tests (requires valid API key):
 
 ```bash
-bun test tests/integration/
+pnpm run test tests/integration/
 ```
 
 ### Running Linting
 
 ```bash
-bun run lint
+pnpm run lint
 ```
 
 ### Formatting Code
 
 ```bash
-bun run format:fix
+pnpm run format:fix
 ```
 
 ### All Checks
@@ -487,7 +488,7 @@ bun run format:fix
 Run all checks before committing:
 
 ```bash
-bun run check && bun run lint && bun run test
+pnpm run check && pnpm run lint && pnpm run test
 ```
 
 ## License
@@ -518,4 +519,5 @@ Built with:
 
 - [Tavily API](https://tavily.com) - Web search and AI answers
 - [Pi Coding Agent](https://pi.dev) - Extension framework
-- [Bun](https://bun.sh) - Package manager and test runner
+- [PNPM](https://pnpm.io) - Package manager
+- [Vitest](https://vitest.dev) - Test runner

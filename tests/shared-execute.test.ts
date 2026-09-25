@@ -8,8 +8,8 @@ import type {
   SessionEntry,
   TruncationResult,
 } from "@earendil-works/pi-coding-agent";
-import { describe, expect, mock, test } from "bun:test";
 import { Temporal } from "temporal-polyfill";
+import { describe, expect, test, vi } from "vitest";
 import {
   buildToolResult,
   raceAbort,
@@ -84,7 +84,7 @@ describe("raceAbort", () => {
 
 describe("sendProgress", () => {
   test("calls onUpdate with progress message", () => {
-    const onUpdate = mock((_update: unknown) => {}) as AgentToolUpdateCallback;
+    const onUpdate = vi.fn((_update: unknown) => {}) as AgentToolUpdateCallback;
 
     sendProgress(onUpdate, "Processing request...");
 
@@ -101,7 +101,7 @@ describe("sendProgress", () => {
   });
 
   test("handles empty progress message", () => {
-    const onUpdate = mock((_update: unknown) => {}) as AgentToolUpdateCallback;
+    const onUpdate = vi.fn((_update: unknown) => {}) as AgentToolUpdateCallback;
 
     sendProgress(onUpdate, "");
 
@@ -112,7 +112,7 @@ describe("sendProgress", () => {
   });
 
   test("handles long progress message", () => {
-    const onUpdate = mock((_update: unknown) => {}) as AgentToolUpdateCallback;
+    const onUpdate = vi.fn((_update: unknown) => {}) as AgentToolUpdateCallback;
     const longMessage = "A".repeat(1000);
 
     sendProgress(onUpdate, longMessage);
@@ -129,8 +129,8 @@ describe("buildToolResult", () => {
     return {
       cwd: "/tmp",
       sessionManager: {
-        getEntry: mock(() => undefined as SessionEntry | undefined),
-        getAll: mock(() => ({})),
+        getEntry: vi.fn(() => undefined as SessionEntry | undefined),
+        getAll: vi.fn(() => ({})),
       },
     } as unknown as ExtensionContext;
   }

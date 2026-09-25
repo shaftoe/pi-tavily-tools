@@ -6,7 +6,8 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { beforeEach, describe, expect, test } from "bun:test";
+import { readFile } from "node:fs/promises";
+import { beforeEach, describe, expect, test } from "vitest";
 import { resultCache } from "../src/tools/shared/cache.js";
 import { registerWebExtractTool } from "../src/tools/web-extract.js";
 
@@ -498,7 +499,7 @@ describe("execute", () => {
 
     // Verify temp file exists and contains the full content
     const tempFile = result.details.fullOutputPath as string;
-    const fileContent = await Bun.file(tempFile).text();
+    const fileContent = await readFile(tempFile, "utf8");
     expect(fileContent).toContain(bigContent);
   });
 });

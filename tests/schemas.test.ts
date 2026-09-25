@@ -2,7 +2,7 @@
  * Unit tests for Tavily TypeBox schemas
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { DEFAULT_MAX_RESULTS } from "../src/tools/tavily/client.js";
 import {
   BaseSearchParamsSchema,

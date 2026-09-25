@@ -2,7 +2,7 @@
  * Unit tests for src/usage/status.ts
  */
 
-import { describe, expect, mock, test } from "bun:test";
+import { describe, expect, test, vi } from "vitest";
 import { RateLimitError, type TavilyUsageData } from "../../src/usage/api.js";
 import { UsageCache } from "../../src/usage/status.js";
 
@@ -13,7 +13,7 @@ import { UsageCache } from "../../src/usage/status.js";
 const createMockContext = () =>
   ({
     ui: {
-      setStatus: mock(() => {}),
+      setStatus: vi.fn(() => {}),
       theme: {
         fg: (color: string, text: string) => `${color}:${text}`,
       },
@@ -23,15 +23,15 @@ const createMockContext = () =>
 
 const createMockFetchUsage = (data: TavilyUsageData) =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  mock(() => Promise.resolve(data)) as any;
+  vi.fn(() => Promise.resolve(data)) as any;
 
 const createThrowingFetchUsage = (errorMessage: string) =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  mock(() => Promise.reject(new Error(errorMessage))) as any;
+  vi.fn(() => Promise.reject(new Error(errorMessage))) as any;
 
 const createRateLimitFetchUsage = (retryAfterMs: number) =>
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  mock(() => Promise.reject(new RateLimitError(retryAfterMs))) as any;
+  vi.fn(() => Promise.reject(new RateLimitError(retryAfterMs))) as any;
 
 // ============================================================================
 // Tests
@@ -239,7 +239,7 @@ describe("UsageCache", () => {
       const mockCtx = createMockContext();
       const mockFetch = createThrowingFetchUsage("API request failed");
       const cache = new UsageCache("test-api-key");
-      const mockConsoleError = mock(() => {});
+      const mockConsoleError = vi.fn(() => {});
       const originalConsoleError = console.error;
 
       console.error = mockConsoleError;

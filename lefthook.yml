@@ -2,9 +2,9 @@ pre-commit:
   parallel: false
   commands:
     format:
-      run: bun run format:fix
+      run: pnpm run format:fix
       stage_fixed: true
     lint:
-      run: bun run check
+      run: pnpm run check
     test:
-      run: bun test
+      run: pnpm run test

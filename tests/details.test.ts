@@ -4,7 +4,7 @@
 
 import type { TruncationResult } from "@earendil-works/pi-coding-agent";
 import type { TavilyExtractOptions, TavilySearchOptions } from "@tavily/core";
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { DEFAULT_MAX_RESULTS } from "../src/tools/tavily/client.js";
 import { buildExtractSuccessDetails, buildSuccessDetails } from "../src/tools/tavily/details.js";
 import type {

@@ -2,7 +2,7 @@
  * Unit tests for Tavily response formatters
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import {
   extractExtractResults,
   extractSearchResults,

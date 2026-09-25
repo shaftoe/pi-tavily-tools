@@ -2,7 +2,7 @@
  * Unit tests for Tavily client utilities
  */
 
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import {
   DEFAULT_MAX_RESULTS,
   buildSearchOptions,

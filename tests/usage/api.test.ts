@@ -2,7 +2,7 @@
  * Unit tests for src/usage/api.ts
  */
 
-import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   DEFAULT_RETRY_AFTER_MS,
   RateLimitError,
@@ -35,10 +35,10 @@ const mockUsageResponse: TavilyUsageResponse = {
 };
 
 describe("getTavilyUsage", () => {
-  let mockFetch: ReturnType<typeof mock>;
+  let mockFetch: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
-    mockFetch = mock(() =>
+    mockFetch = vi.fn(() =>
       Promise.resolve({
         ok: true,
         text: async () => JSON.stringify(structuredClone(mockUsageResponse)),

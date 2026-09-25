@@ -3,7 +3,7 @@
  */
 
 import type { Text } from "@earendil-works/pi-tui";
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { DEFAULT_MAX_RESULTS } from "../src/tools/tavily/client.js";
 import { renderWebSearchCall, renderWebSearchResult } from "../src/tools/tavily/renderers.js";
 
