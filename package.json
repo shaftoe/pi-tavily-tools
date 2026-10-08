@@ -61,7 +61,7 @@
     "release:dry-run": "semantic-release --dry-run"
   },
   "devDependencies": {
-    "@alexanderfortin/semantic-release-keep-a-changelog": "^0.4.14",
+    "@alexanderfortin/semantic-release-keep-a-changelog": "^0.5.0",
     "@earendil-works/pi-ai": "0.85.1",
     "@earendil-works/pi-coding-agent": "0.85.1",
     "@earendil-works/pi-tui": "0.85.1",
