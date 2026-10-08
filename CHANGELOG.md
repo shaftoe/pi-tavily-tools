@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-10-08
+
+### Changed
+
+- **deps-dev**: update dependency @alexanderfortin/semantic-release-keep-a-changelog to ^0.5.0 (#92)
+- **deps-dev**: update dependency eslint to ^10.12.0 (#93)
+- **deps**: update vitest monorepo to ^3.2.7 (#90)
+
 ## [0.7.0] - 2026-09-25
 
 ### Added
@@ -293,7 +301,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release with `web_search` tool using Tavily
 
-[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.0...HEAD
+[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.6.9...v0.7.0
 [0.6.9]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.6.8...v0.6.9
 [0.6.8]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.6.7...v0.6.8
