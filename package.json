@@ -87,7 +87,7 @@
     "typescript": "6"
   },
   "dependencies": {
-    "@tavily/core": "^0.7.13",
+    "@tavily/core": "^0.7.14",
     "temporal-polyfill": "^1.0.5"
   }
 }
