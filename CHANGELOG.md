@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-10-11
+
+### Changed
+
+- **deps-dev**: update typescript-eslint monorepo to ^8.71.1 (#96)
+
+### Fixed
+
+- **deps**: update dependency @tavily/core to ^0.7.14 (#91)
+
 ## [0.7.1] - 2026-10-08
 
 ### Changed
@@ -301,7 +311,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release with `web_search` tool using Tavily
 
-[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.1...HEAD
+[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.2...HEAD
+[0.7.2]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.6.9...v0.7.0
 [0.6.9]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.6.8...v0.6.9
