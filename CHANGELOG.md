@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.3] - 2026-10-12
+
+### Changed
+
+- **deps**: stack dependency updates and upgrade pi to 1.1.0
+
+### Fixed
+
+- **tests**: use per-file temp dirs to avoid cross-worker cleanup race
+
 ## [0.7.2] - 2026-10-11
 
 ### Changed
@@ -311,7 +321,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release with `web_search` tool using Tavily
 
-[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.2...HEAD
+[unreleased]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.3...HEAD
+[0.7.3]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/shaftoe/pi-tavily-tools/compare/v0.6.9...v0.7.0
