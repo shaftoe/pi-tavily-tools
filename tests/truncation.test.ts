@@ -65,13 +65,13 @@ describe("cleanupTempDir", () => {
     await cleanupTempDir(testTempDir);
 
     // Dir should be gone
-    expect(stat(tempDir)).rejects.toThrow();
+    await expect(stat(tempDir)).rejects.toThrow();
   });
 
   test("succeeds when temp directory does not exist", async () => {
     await rm(testTempDir, { recursive: true, force: true });
 
-    expect(cleanupTempDir(testTempDir)).resolves.toBeUndefined();
+    await expect(cleanupTempDir(testTempDir)).resolves.toBeUndefined();
   });
 
   test("removes nested files created by applyTruncation", async () => {
@@ -86,8 +86,8 @@ describe("cleanupTempDir", () => {
 
     await cleanupTempDir(testTempDir);
 
-    expect(access(result1.fullOutputPath!)).rejects.toThrow();
-    expect(access(result2.fullOutputPath!)).rejects.toThrow();
+    await expect(access(result1.fullOutputPath!)).rejects.toThrow();
+    await expect(access(result2.fullOutputPath!)).rejects.toThrow();
   });
 
   test("preserves files outside temp directory", async () => {
@@ -102,7 +102,7 @@ describe("cleanupTempDir", () => {
 
     const content = await readFile(outsideFile, "utf8");
     expect(content).toBe("untouched");
-    expect(stat(tempDir)).rejects.toThrow();
+    await expect(stat(tempDir)).rejects.toThrow();
   });
 });
 

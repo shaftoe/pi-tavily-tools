@@ -389,7 +389,7 @@ describe("web_search integration tests", () => {
         const webSearchTool = tools[0];
         if (!webSearchTool) throw new Error("Tool not registered");
 
-        expect(
+        await expect(
           webSearchTool.execute("test-error-1", { query: "   " }, undefined, undefined, {
             cwd: "/tmp",
           })
@@ -401,7 +401,7 @@ describe("web_search integration tests", () => {
         const webSearchTool = tools[0];
         if (!webSearchTool) throw new Error("Tool not registered");
 
-        expect(
+        await expect(
           webSearchTool.execute(
             "test-error-2",
             { query: "test", search_depth: "invalid" as unknown as "basic" },

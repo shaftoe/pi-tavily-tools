@@ -37,8 +37,8 @@
     "LICENSE"
   ],
   "peerDependencies": {
-    "@earendil-works/pi-coding-agent": "*",
     "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*",
     "@earendil-works/pi-tui": "*",
     "@sinclair/typebox": "*"
   },
@@ -61,10 +61,10 @@
     "release:dry-run": "semantic-release --dry-run"
   },
   "devDependencies": {
-    "@alexanderfortin/semantic-release-keep-a-changelog": "^0.5.0",
-    "@earendil-works/pi-ai": "0.85.1",
-    "@earendil-works/pi-coding-agent": "0.85.1",
-    "@earendil-works/pi-tui": "0.85.1",
+    "@alexanderfortin/semantic-release-keep-a-changelog": "^0.5.1",
+    "@earendil-works/pi-ai": "1.1.0",
+    "@earendil-works/pi-coding-agent": "1.1.0",
+    "@earendil-works/pi-tui": "1.1.0",
     "@semantic-release/changelog": "7.0.0",
     "@semantic-release/commit-analyzer": "13.0.1",
     "@semantic-release/exec": "7.1.0",
@@ -72,19 +72,19 @@
     "@semantic-release/github": "^12.0.10",
     "@semantic-release/npm": "^13.2.0",
     "@semantic-release/release-notes-generator": "14.1.1",
-    "@sinclair/typebox": "0.34.49",
-    "@types/node": "^26.6.2",
-    "@vitest/coverage-v8": "^3.2.7",
-    "@vitest/eslint-plugin": "^1.4.3",
-    "vitest": "^3.2.7",
+    "@sinclair/typebox": "0.34.52",
+    "@types/node": "^26.6.5",
     "@typescript-eslint/eslint-plugin": "^8.71.1",
     "@typescript-eslint/parser": "^8.71.1",
+    "@vitest/coverage-v8": "^5.0.3",
+    "@vitest/eslint-plugin": "^1.6.27",
     "eslint": "^10.12.0",
     "eslint-config-prettier": "10.1.8",
-    "prettier": "^3.9.9",
+    "prettier": "^3.9.10",
     "prettier-plugin-organize-imports": "4.3.0",
     "semantic-release": "25.0.9",
-    "typescript": "6"
+    "typescript": "6.0.3",
+    "vitest": "^5.0.3"
   },
   "dependencies": {
     "@tavily/core": "^0.7.14",

@@ -216,7 +216,7 @@ describe("execute", () => {
     registerWebExtractTool(api, createMockClient(mockResponse()));
     const tool = getTool();
 
-    expect(
+    await expect(
       tool.execute("call-5", { urls: [] }, undefined, undefined, { cwd: "/tmp" })
     ).rejects.toThrow("URLs array cannot be empty");
   });
@@ -226,7 +226,7 @@ describe("execute", () => {
     registerWebExtractTool(api, createMockClient(mockResponse()));
     const tool = getTool();
 
-    expect(
+    await expect(
       tool.execute("call-6", { urls: "not-an-array" as unknown as [] }, undefined, undefined, {
         cwd: "/tmp",
       })
@@ -238,7 +238,7 @@ describe("execute", () => {
     registerWebExtractTool(api, createMockClient(mockResponse()));
     const tool = getTool();
 
-    expect(
+    await expect(
       tool.execute("call-7", { urls: ["not-a-valid-url"] }, undefined, undefined, {
         cwd: "/tmp",
       })
@@ -252,9 +252,9 @@ describe("execute", () => {
 
     const urls = Array.from({ length: 21 }, (_, i) => `https://example${i}.com`);
 
-    expect(tool.execute("call-8", { urls }, undefined, undefined, { cwd: "/tmp" })).rejects.toThrow(
-      "Maximum 20 URLs allowed"
-    );
+    await expect(
+      tool.execute("call-8", { urls }, undefined, undefined, { cwd: "/tmp" })
+    ).rejects.toThrow("Maximum 20 URLs allowed");
   });
 
   test("handles multiple URLs", async () => {
@@ -443,7 +443,7 @@ describe("execute", () => {
     registerWebExtractTool(api, client);
     const tool = getTool();
 
-    expect(
+    await expect(
       tool.execute("call-14", { urls: ["https://example.com"] }, undefined, undefined, {
         cwd: "/tmp",
       })

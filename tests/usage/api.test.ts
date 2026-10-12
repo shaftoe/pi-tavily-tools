@@ -52,13 +52,13 @@ describe("getTavilyUsage", () => {
   });
 
   test("should throw an error when API key is empty string", async () => {
-    expect(getTavilyUsage("")).rejects.toThrow("TAVILY_API_KEY is not set");
+    await expect(getTavilyUsage("")).rejects.toThrow("TAVILY_API_KEY is not set");
   });
 
   test("should throw an error when API request fails with 401", async () => {
     mockFetch.mockImplementationOnce(() => Promise.resolve({ ok: false, status: 401 } as Response));
 
-    expect(getTavilyUsage("test-key")).rejects.toThrow(
+    await expect(getTavilyUsage("test-key")).rejects.toThrow(
       "Tavily usage API request failed with status 401"
     );
   });
@@ -66,7 +66,7 @@ describe("getTavilyUsage", () => {
   test("should throw an error when API returns 500", async () => {
     mockFetch.mockImplementationOnce(() => Promise.resolve({ ok: false, status: 500 } as Response));
 
-    expect(getTavilyUsage("test-key")).rejects.toThrow(
+    await expect(getTavilyUsage("test-key")).rejects.toThrow(
       "Tavily usage API request failed with status 500"
     );
   });
@@ -79,7 +79,7 @@ describe("getTavilyUsage", () => {
       } as Response)
     );
 
-    expect(getTavilyUsage("test-key")).rejects.toThrow(
+    await expect(getTavilyUsage("test-key")).rejects.toThrow(
       "Unexpected Tavily usage API response: missing account usage data"
     );
   });
@@ -95,7 +95,7 @@ describe("getTavilyUsage", () => {
       } as Response)
     );
 
-    expect(getTavilyUsage("test-key")).rejects.toThrow(
+    await expect(getTavilyUsage("test-key")).rejects.toThrow(
       "Unexpected Tavily usage API response: missing account usage data"
     );
   });
@@ -111,7 +111,7 @@ describe("getTavilyUsage", () => {
       } as Response)
     );
 
-    expect(getTavilyUsage("test-key")).rejects.toThrow(
+    await expect(getTavilyUsage("test-key")).rejects.toThrow(
       "Unexpected Tavily usage API response: missing account plan limit"
     );
   });
@@ -120,13 +120,13 @@ describe("getTavilyUsage", () => {
     const result = (await getTavilyUsage("test-key"))!;
 
     // 500 / (15000 + 100) * 100 = 3.311...
-    expect(result.percentage).toBeCloseTo(3.311, 2);
-    expect(result.planUsage).toBe(500);
-    expect(result.planLimit).toBe(15000);
-    expect(result.paygoUsage).toBe(25);
-    expect(result.paygoLimit).toBe(100);
-    expect(result.keyUsage).toBe(150);
-    expect(result.keyLimit).toBe(1000);
+    await expect(result.percentage).toBeCloseTo(3.311, 2);
+    await expect(result.planUsage).toBe(500);
+    await expect(result.planLimit).toBe(15000);
+    await expect(result.paygoUsage).toBe(25);
+    await expect(result.paygoLimit).toBe(100);
+    await expect(result.keyUsage).toBe(150);
+    await expect(result.keyLimit).toBe(1000);
   });
 
   test("should handle 0% usage", async () => {
@@ -140,8 +140,8 @@ describe("getTavilyUsage", () => {
 
     const result = (await getTavilyUsage("test-key"))!;
 
-    expect(result.percentage).toBe(0);
-    expect(result.planUsage).toBe(0);
+    await expect(result.percentage).toBe(0);
+    await expect(result.planUsage).toBe(0);
   });
 
   test("should handle 100% usage (plan and PAYGO both maxed)", async () => {
@@ -156,7 +156,7 @@ describe("getTavilyUsage", () => {
     const result = (await getTavilyUsage("test-key"))!;
 
     // 15000 / (15000 + 100) * 100 = 99.3377...
-    expect(result.percentage).toBeCloseTo(99.34, 2);
+    await expect(result.percentage).toBeCloseTo(99.34, 2);
   });
 
   test("should handle plan_limit of 0 without division by zero", async () => {
@@ -173,7 +173,7 @@ describe("getTavilyUsage", () => {
     const result = (await getTavilyUsage("test-key"))!;
 
     // (50 + 0) / (0 + 0 || 1) * 100 = 5000 — falls back to limit of 1
-    expect(result.percentage).toBe(5000);
+    await expect(result.percentage).toBe(5000);
   });
 
   test("should make request to correct API endpoint with correct headers", async () => {
@@ -191,8 +191,8 @@ describe("getTavilyUsage", () => {
 
     await getTavilyUsage("my-secret-key");
 
-    expect(fetchUrl).toBe("https://api.tavily.com/usage");
-    expect(fetchHeaders?.Authorization).toBe("Bearer my-secret-key");
+    await expect(fetchUrl).toBe("https://api.tavily.com/usage");
+    await expect(fetchHeaders?.Authorization).toBe("Bearer my-secret-key");
   });
 
   test("should default keyUsage/keyLimit to 0 when key section is missing", async () => {
@@ -211,9 +211,9 @@ describe("getTavilyUsage", () => {
 
     const result = (await getTavilyUsage("test-key"))!;
 
-    expect(result.keyUsage).toBe(0);
-    expect(result.keyLimit).toBe(0);
-    expect(result.percentage).toBe(10);
+    await expect(result.keyUsage).toBe(0);
+    await expect(result.keyLimit).toBe(0);
+    await expect(result.percentage).toBe(10);
   });
 
   test("should calculate percentage correctly for free-tier-only user (no PAYGO)", async () => {
@@ -234,9 +234,9 @@ describe("getTavilyUsage", () => {
 
     const result = (await getTavilyUsage("test-key"))!;
 
-    expect(result.percentage).toBe(50);
-    expect(result.paygoUsage).toBe(0);
-    expect(result.paygoLimit).toBe(0);
+    await expect(result.percentage).toBe(50);
+    await expect(result.paygoUsage).toBe(0);
+    await expect(result.paygoLimit).toBe(0);
   });
 
   test("should calculate percentage correctly when plan exceeded but PAYGO covers it", async () => {
@@ -258,7 +258,7 @@ describe("getTavilyUsage", () => {
     const result = (await getTavilyUsage("test-key"))!;
 
     // (1018 + 0) / (1000 + 5000) * 100 = 16.97%
-    expect(result.percentage).toBeCloseTo(16.97, 1);
+    await expect(result.percentage).toBeCloseTo(16.97, 1);
   });
 
   test("should default paygo fields to 0 when missing from response", async () => {
@@ -277,9 +277,9 @@ describe("getTavilyUsage", () => {
 
     const result = (await getTavilyUsage("test-key"))!;
 
-    expect(result.paygoUsage).toBe(0);
-    expect(result.paygoLimit).toBe(0);
-    expect(result.percentage).toBe(20);
+    await expect(result.paygoUsage).toBe(0);
+    await expect(result.paygoLimit).toBe(0);
+    await expect(result.percentage).toBe(20);
   });
 
   test("should handle PAYGO-only usage with exhausted plan", async () => {
@@ -301,7 +301,7 @@ describe("getTavilyUsage", () => {
     const result = (await getTavilyUsage("test-key"))!;
 
     // 1000 / (1000 + 1000) * 100 = 50%
-    expect(result.percentage).toBe(50);
+    await expect(result.percentage).toBe(50);
   });
 
   test("should throw RateLimitError when API returns 429 with retry-after header", async () => {
@@ -319,8 +319,8 @@ describe("getTavilyUsage", () => {
     await expect(getTavilyUsage("test-key")).rejects.toThrow(RateLimitError);
 
     const error = await getTavilyUsage("test-key").catch((e) => e);
-    expect(error).toBeInstanceOf(RateLimitError);
-    expect((error as RateLimitError).retryAfterMs).toBe(60000);
+    await expect(error).toBeInstanceOf(RateLimitError);
+    await expect((error as RateLimitError).retryAfterMs).toBe(60000);
   });
 
   test("should throw RateLimitError with default 5-minute backoff when retry-after header is missing", async () => {
@@ -336,8 +336,8 @@ describe("getTavilyUsage", () => {
     );
 
     const error = await getTavilyUsage("test-key").catch((e) => e);
-    expect(error).toBeInstanceOf(RateLimitError);
-    expect((error as RateLimitError).retryAfterMs).toBe(DEFAULT_RETRY_AFTER_MS);
+    await expect(error).toBeInstanceOf(RateLimitError);
+    await expect((error as RateLimitError).retryAfterMs).toBe(DEFAULT_RETRY_AFTER_MS);
   });
 
   test("should return undefined when API returns empty body (e.g. 202 Accepted)", async () => {
@@ -351,7 +351,7 @@ describe("getTavilyUsage", () => {
     );
 
     const result = await getTavilyUsage("test-key");
-    expect(result).toBeUndefined();
+    await expect(result).toBeUndefined();
   });
 
   test("should return undefined when API returns non-JSON body", async () => {
@@ -365,7 +365,7 @@ describe("getTavilyUsage", () => {
     );
 
     const result = await getTavilyUsage("test-key");
-    expect(result).toBeUndefined();
+    await expect(result).toBeUndefined();
   });
 
   test("should parse retry-after header with different values", async () => {
@@ -389,8 +389,8 @@ describe("getTavilyUsage", () => {
       );
 
       const error = await getTavilyUsage("test-key").catch((e) => e);
-      expect(error).toBeInstanceOf(RateLimitError);
-      expect((error as RateLimitError).retryAfterMs).toBe(expectedMs);
+      await expect(error).toBeInstanceOf(RateLimitError);
+      await expect((error as RateLimitError).retryAfterMs).toBe(expectedMs);
     }
   });
 });

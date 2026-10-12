@@ -434,7 +434,7 @@ describe("web_extract integration tests", () => {
         const webExtractTool = tools[0];
         if (!webExtractTool) throw new Error("Tool not registered");
 
-        expect(
+        await expect(
           webExtractTool.execute("test-error-1", { urls: [] }, undefined, undefined, {
             cwd: "/tmp",
           })
@@ -446,7 +446,7 @@ describe("web_extract integration tests", () => {
         const webExtractTool = tools[0];
         if (!webExtractTool) throw new Error("Tool not registered");
 
-        expect(
+        await expect(
           webExtractTool.execute("test-error-2", { urls: ["not-a-url"] }, undefined, undefined, {
             cwd: "/tmp",
           })
@@ -460,7 +460,7 @@ describe("web_extract integration tests", () => {
 
         const urls = Array.from({ length: 21 }, (_, i) => `https://example${i}.com`);
 
-        expect(
+        await expect(
           webExtractTool.execute("test-error-3", { urls }, undefined, undefined, {
             cwd: "/tmp",
           })

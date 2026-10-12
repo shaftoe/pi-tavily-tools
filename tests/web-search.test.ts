@@ -181,7 +181,7 @@ describe("execute", () => {
     registerWebSearchTool(api, createMockClient(mockResponse()));
     const tool = getTool();
 
-    expect(
+    await expect(
       tool.execute("call-6", { query: "   " }, undefined, undefined, { cwd: "/tmp" })
     ).rejects.toThrow("Query cannot be empty");
   });
@@ -197,7 +197,7 @@ describe("execute", () => {
     registerWebSearchTool(api, client);
     const tool = getTool();
 
-    expect(
+    await expect(
       tool.execute("call-7", { query: "test" }, undefined, undefined, { cwd: "/tmp" })
     ).rejects.toThrow("API rate limit exceeded");
   });
