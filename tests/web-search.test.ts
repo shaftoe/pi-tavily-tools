@@ -6,9 +6,14 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { beforeEach, describe, expect, test } from "vitest";
 import { resultCache } from "../src/tools/shared/cache.js";
 import { registerWebSearchTool } from "../src/tools/web-search.js";
+
+const testCwd = mkdtempSync(join(tmpdir(), "pi-tavily-test-"));
 
 // ============================================================================
 // Mock helpers
@@ -88,7 +93,7 @@ describe("execute", () => {
     const tool = getTool();
 
     const result = (await tool.execute("call-1", { query: "test query" }, undefined, undefined, {
-      cwd: "/tmp",
+      cwd: testCwd,
     })) as {
       content: Array<{ type: string; text: string }>;
       details: Record<string, unknown>;
@@ -115,7 +120,7 @@ describe("execute", () => {
       { query: "meaning of life" },
       undefined,
       undefined,
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     )) as { details: Record<string, unknown> };
 
     expect(result.details.answer).toBe("42");
@@ -127,7 +132,7 @@ describe("execute", () => {
     const tool = getTool();
 
     const result = (await tool.execute("call-3", { query: "test" }, undefined, undefined, {
-      cwd: "/tmp",
+      cwd: testCwd,
     })) as { details: Record<string, unknown> };
 
     expect(result.details.answer).toBeUndefined();
@@ -151,7 +156,7 @@ describe("execute", () => {
       { query: "test", max_results: 10, search_depth: "advanced", include_images: true },
       undefined,
       undefined,
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     );
 
     expect(capturedOptions).toBeDefined();
@@ -168,7 +173,7 @@ describe("execute", () => {
 
     const updates: unknown[] = [];
     await tool.execute("call-5", { query: "test" }, undefined, (u) => updates.push(u), {
-      cwd: "/tmp",
+      cwd: testCwd,
     });
 
     expect(updates).toHaveLength(1);
@@ -182,7 +187,7 @@ describe("execute", () => {
     const tool = getTool();
 
     await expect(
-      tool.execute("call-6", { query: "   " }, undefined, undefined, { cwd: "/tmp" })
+      tool.execute("call-6", { query: "   " }, undefined, undefined, { cwd: testCwd })
     ).rejects.toThrow("Query cannot be empty");
   });
 
@@ -198,7 +203,7 @@ describe("execute", () => {
     const tool = getTool();
 
     await expect(
-      tool.execute("call-7", { query: "test" }, undefined, undefined, { cwd: "/tmp" })
+      tool.execute("call-7", { query: "test" }, undefined, undefined, { cwd: testCwd })
     ).rejects.toThrow("API rate limit exceeded");
   });
 
@@ -208,7 +213,7 @@ describe("execute", () => {
     const tool = getTool();
 
     const result = (await tool.execute("call-8", { query: "obscure query" }, undefined, undefined, {
-      cwd: "/tmp",
+      cwd: testCwd,
     })) as {
       content: Array<{ type: string; text: string }>;
       details: Record<string, unknown>;
@@ -236,7 +241,7 @@ describe("execute", () => {
       { query: "test", include_images: true },
       undefined,
       undefined,
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     )) as {
       content: Array<{ type: string; text: string }>;
       details: Record<string, unknown>;
@@ -260,7 +265,7 @@ describe("execute", () => {
     const tool = getTool();
 
     await tool.execute("call-10", { query: "  padded query  " }, undefined, undefined, {
-      cwd: "/tmp",
+      cwd: testCwd,
     });
 
     expect(capturedQuery).toBe("padded query");

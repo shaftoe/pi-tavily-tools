@@ -6,9 +6,14 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createTavilyClient } from "../../src/tools/tavily/client.js";
 import { registerWebSearchTool } from "../../src/tools/web-search.js";
+
+const testCwd = mkdtempSync(join(tmpdir(), "pi-tavily-test-"));
 
 // ============================================================================
 // Test Setup
@@ -169,7 +174,7 @@ describe("web_search integration tests", () => {
           { query: "TypeScript programming language" },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result).toBeDefined();
@@ -197,7 +202,7 @@ describe("web_search integration tests", () => {
           { query: "Paris capital city" },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         const sources = result.details.sources;
@@ -228,7 +233,7 @@ describe("web_search integration tests", () => {
           { query: "What is 2+2?", include_answer: true },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         // Answer may or may not be present depending on query type
@@ -248,7 +253,7 @@ describe("web_search integration tests", () => {
           { query: "JavaScript", max_results: 3 },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result.details.resultCount).toBeLessThanOrEqual(3);
@@ -264,7 +269,7 @@ describe("web_search integration tests", () => {
           { query: "Python programming", search_depth: "basic" },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         const result2 = await webSearchTool.execute(
@@ -272,7 +277,7 @@ describe("web_search integration tests", () => {
           { query: "Python programming", search_depth: "advanced" },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result1.details.searchDepth).toBe("basic");
@@ -289,7 +294,7 @@ describe("web_search integration tests", () => {
           { query: "latest tech news", days: 7 },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result.details.days).toBe(7);
@@ -305,7 +310,7 @@ describe("web_search integration tests", () => {
           { query: "best practices for TypeScript error handling" },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result.details.query).toBe("best practices for TypeScript error handling");
@@ -322,7 +327,7 @@ describe("web_search integration tests", () => {
           { query: "C++ vs Rust performance" },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result.details.query).toBe("C++ vs Rust performance");
@@ -339,7 +344,7 @@ describe("web_search integration tests", () => {
           { query: "ISO 8601 date format" },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result.details.query).toBe("ISO 8601 date format");
@@ -356,7 +361,7 @@ describe("web_search integration tests", () => {
           { query: "open source projects" },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         const sources = result.details.sources;
@@ -376,7 +381,7 @@ describe("web_search integration tests", () => {
           { query: "test query" },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result.content[0]!.text.length).toBeGreaterThan(0);
@@ -391,7 +396,7 @@ describe("web_search integration tests", () => {
 
         await expect(
           webSearchTool.execute("test-error-1", { query: "   " }, undefined, undefined, {
-            cwd: "/tmp",
+            cwd: testCwd,
           })
         ).rejects.toThrow("Query cannot be empty");
       });
@@ -407,7 +412,7 @@ describe("web_search integration tests", () => {
             { query: "test", search_depth: "invalid" as unknown as "basic" },
             undefined,
             undefined,
-            { cwd: "/tmp" }
+            { cwd: testCwd }
           )
         ).rejects.toThrow("Invalid search depth");
       });

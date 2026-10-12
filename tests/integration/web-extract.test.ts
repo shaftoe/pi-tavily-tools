@@ -6,9 +6,14 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createTavilyClient } from "../../src/tools/tavily/client.js";
 import { registerWebExtractTool } from "../../src/tools/web-extract.js";
+
+const testCwd = mkdtempSync(join(tmpdir(), "pi-tavily-test-"));
 
 // ============================================================================
 // Test Setup
@@ -171,7 +176,7 @@ describe("web_extract integration tests", () => {
           { urls: ["https://en.wikipedia.org/wiki/Artificial_intelligence"] },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result).toBeDefined();
@@ -200,7 +205,7 @@ describe("web_extract integration tests", () => {
         ];
 
         const result = await webExtractTool.execute("test-call-2", { urls }, undefined, undefined, {
-          cwd: "/tmp",
+          cwd: testCwd,
         });
 
         expect(result.details.urlCount).toBe(3);
@@ -220,7 +225,7 @@ describe("web_extract integration tests", () => {
           },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result1.details.extractDepth).toBe("basic");
@@ -239,7 +244,7 @@ describe("web_extract integration tests", () => {
           },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result.details.includeImages).toBe(true);
@@ -258,7 +263,7 @@ describe("web_extract integration tests", () => {
           },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         const result2 = await webExtractTool.execute(
@@ -269,7 +274,7 @@ describe("web_extract integration tests", () => {
           },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result1.details.format).toBe("markdown");
@@ -289,7 +294,7 @@ describe("web_extract integration tests", () => {
           },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result.details.query).toBe("machine learning");
@@ -305,7 +310,7 @@ describe("web_extract integration tests", () => {
           { urls: ["https://en.wikipedia.org/wiki/JavaScript"] },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         const results = result.details.results;
@@ -336,7 +341,7 @@ describe("web_extract integration tests", () => {
         ];
 
         const result = await webExtractTool.execute("test-call-8", { urls }, undefined, undefined, {
-          cwd: "/tmp",
+          cwd: testCwd,
         });
 
         // Should have some combination of successes and failures
@@ -364,7 +369,7 @@ describe("web_extract integration tests", () => {
           { urls: ["https://en.wikipedia.org/wiki/Bun_(software)"] },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result.content[0]!.text.length).toBeGreaterThan(0);
@@ -380,7 +385,7 @@ describe("web_extract integration tests", () => {
           { urls: ["https://en.wikipedia.org/wiki/Node.js"] },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         const results = result.details.results;
@@ -400,7 +405,7 @@ describe("web_extract integration tests", () => {
           { urls: ["https://en.wikipedia.org/wiki/HTTP"] },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         expect(result.details.urlCount).toBe(1);
@@ -417,7 +422,7 @@ describe("web_extract integration tests", () => {
           { urls: ["https://en.wikipedia.org/wiki/Docker_(software)"] },
           undefined,
           undefined,
-          { cwd: "/tmp" }
+          { cwd: testCwd }
         );
 
         if (result.details.results.length > 0) {
@@ -436,7 +441,7 @@ describe("web_extract integration tests", () => {
 
         await expect(
           webExtractTool.execute("test-error-1", { urls: [] }, undefined, undefined, {
-            cwd: "/tmp",
+            cwd: testCwd,
           })
         ).rejects.toThrow("URLs array cannot be empty");
       });
@@ -448,7 +453,7 @@ describe("web_extract integration tests", () => {
 
         await expect(
           webExtractTool.execute("test-error-2", { urls: ["not-a-url"] }, undefined, undefined, {
-            cwd: "/tmp",
+            cwd: testCwd,
           })
         ).rejects.toThrow("Invalid URL format");
       });
@@ -462,7 +467,7 @@ describe("web_extract integration tests", () => {
 
         await expect(
           webExtractTool.execute("test-error-3", { urls }, undefined, undefined, {
-            cwd: "/tmp",
+            cwd: testCwd,
           })
         ).rejects.toThrow("Maximum 20 URLs allowed");
       });

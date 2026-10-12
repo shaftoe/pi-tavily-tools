@@ -6,10 +6,15 @@
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { mkdtempSync } from "node:fs";
 import { readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { beforeEach, describe, expect, test } from "vitest";
 import { resultCache } from "../src/tools/shared/cache.js";
 import { registerWebExtractTool } from "../src/tools/web-extract.js";
+
+const testCwd = mkdtempSync(join(tmpdir(), "pi-tavily-test-"));
 
 // ============================================================================
 // Mock helpers
@@ -110,7 +115,7 @@ describe("execute", () => {
       { urls: ["https://example.com/article"] },
       undefined,
       undefined,
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     )) as {
       content: Array<{ type: string; text: string }>;
       details: Record<string, unknown>;
@@ -147,7 +152,7 @@ describe("execute", () => {
       { urls: ["https://example.com/article", "https://failed.com/page"] },
       undefined,
       undefined,
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     )) as { details: Record<string, unknown> };
 
     expect(result.details.failureCount).toBe(1);
@@ -181,7 +186,7 @@ describe("execute", () => {
       },
       undefined,
       undefined,
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     );
 
     expect(capturedUrls).toEqual(["https://example.com"]);
@@ -203,7 +208,7 @@ describe("execute", () => {
       { urls: ["https://example.com"] },
       undefined,
       (u) => updates.push(u),
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     );
 
     expect(updates).toHaveLength(1);
@@ -217,7 +222,7 @@ describe("execute", () => {
     const tool = getTool();
 
     await expect(
-      tool.execute("call-5", { urls: [] }, undefined, undefined, { cwd: "/tmp" })
+      tool.execute("call-5", { urls: [] }, undefined, undefined, { cwd: testCwd })
     ).rejects.toThrow("URLs array cannot be empty");
   });
 
@@ -228,7 +233,7 @@ describe("execute", () => {
 
     await expect(
       tool.execute("call-6", { urls: "not-an-array" as unknown as [] }, undefined, undefined, {
-        cwd: "/tmp",
+        cwd: testCwd,
       })
     ).rejects.toThrow("URLs must be an array");
   });
@@ -240,7 +245,7 @@ describe("execute", () => {
 
     await expect(
       tool.execute("call-7", { urls: ["not-a-valid-url"] }, undefined, undefined, {
-        cwd: "/tmp",
+        cwd: testCwd,
       })
     ).rejects.toThrow("Invalid URL format");
   });
@@ -253,7 +258,7 @@ describe("execute", () => {
     const urls = Array.from({ length: 21 }, (_, i) => `https://example${i}.com`);
 
     await expect(
-      tool.execute("call-8", { urls }, undefined, undefined, { cwd: "/tmp" })
+      tool.execute("call-8", { urls }, undefined, undefined, { cwd: testCwd })
     ).rejects.toThrow("Maximum 20 URLs allowed");
   });
 
@@ -289,7 +294,7 @@ describe("execute", () => {
       { urls: ["https://example1.com", "https://example2.com", "https://example3.com"] },
       undefined,
       undefined,
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     )) as { details: Record<string, unknown> };
 
     expect(result.details.urlCount).toBe(3);
@@ -319,7 +324,7 @@ describe("execute", () => {
       { urls: ["https://failed.com"] },
       undefined,
       undefined,
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     )) as {
       content: Array<{ type: string; text: string }>;
       details: Record<string, unknown>;
@@ -340,7 +345,7 @@ describe("execute", () => {
       { urls: ["https://example.com"], include_images: true },
       undefined,
       undefined,
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     )) as { details: Record<string, unknown> };
 
     expect(result.details.includeImages).toBe(true);
@@ -356,7 +361,7 @@ describe("execute", () => {
       { urls: ["https://example.com"], format: "text" },
       undefined,
       undefined,
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     )) as { details: Record<string, unknown> };
 
     expect(result.details.format).toBe("text");
@@ -372,7 +377,7 @@ describe("execute", () => {
       { urls: ["https://example.com"], query: "find specific content" },
       undefined,
       undefined,
-      { cwd: "/tmp" }
+      { cwd: testCwd }
     )) as { details: Record<string, unknown> };
 
     expect(result.details.query).toBe("find specific content");
@@ -445,7 +450,7 @@ describe("execute", () => {
 
     await expect(
       tool.execute("call-14", { urls: ["https://example.com"] }, undefined, undefined, {
-        cwd: "/tmp",
+        cwd: testCwd,
       })
     ).rejects.toThrow("API rate limit exceeded");
   });
@@ -454,7 +459,7 @@ describe("execute", () => {
     // Generate >50KB content to trigger truncation
     const bigContent = "X".repeat(60000);
     const { api, getTool } = createMockAPI();
-    const testCwd = "/tmp/test-truncation-pipeline";
+    const pipelineCwd = "/tmp/test-truncation-pipeline";
     registerWebExtractTool(
       api,
       createMockClient({
@@ -475,7 +480,7 @@ describe("execute", () => {
       { urls: ["https://example.com/big-page"] },
       undefined,
       undefined,
-      { cwd: testCwd }
+      { cwd: pipelineCwd }
     )) as {
       content: Array<{ type: string; text: string }>;
       details: Record<string, unknown>;

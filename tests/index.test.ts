@@ -3,7 +3,12 @@
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+
+const testCwd = mkdtempSync(join(tmpdir(), "pi-tavily-test-"));
 
 // Real module namespace, used to build a faithful mock that overrides only
 // readStoredCredential. Loaded before any vi.doMock() call.
@@ -129,7 +134,7 @@ describe("Extension entry point", () => {
 
     // Call session_start handler twice — the second call should be a no-op
     const ctx: ExtensionContext = {
-      cwd: "/tmp",
+      cwd: testCwd,
       ui: { setStatus: vi.fn(() => {}), theme: { fg: (_c: string, t: string) => t } },
     } as unknown as ExtensionContext;
     await handlers["session_start"]!({}, ctx);
@@ -153,7 +158,7 @@ describe("Extension entry point", () => {
     extension(pi);
 
     const ctx: ExtensionContext = {
-      cwd: "/tmp",
+      cwd: testCwd,
       ui: { setStatus: vi.fn(() => {}), theme: { fg: (_c: string, t: string) => t } },
     } as unknown as ExtensionContext;
 

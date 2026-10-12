@@ -8,6 +8,9 @@ import type {
   SessionEntry,
   TruncationResult,
 } from "@earendil-works/pi-coding-agent";
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { Temporal } from "temporal-polyfill";
 import { describe, expect, test, vi } from "vitest";
 import {
@@ -16,6 +19,8 @@ import {
   sanitizeError,
   sendProgress,
 } from "../src/tools/shared/execute.js";
+
+const testCwd = mkdtempSync(join(tmpdir(), "pi-tavily-test-"));
 
 describe("sanitizeError", () => {
   test("redacts Tavily API key in error message", () => {
@@ -127,7 +132,7 @@ describe("sendProgress", () => {
 describe("buildToolResult", () => {
   function mockCtx(): ExtensionContext {
     return {
-      cwd: "/tmp",
+      cwd: testCwd,
       sessionManager: {
         getEntry: vi.fn(() => undefined as SessionEntry | undefined),
         getAll: vi.fn(() => ({})),
