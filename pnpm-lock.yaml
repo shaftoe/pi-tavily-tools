@@ -16,8 +16,8 @@ importers:
         version: 1.0.5
     devDependencies:
       '@alexanderfortin/semantic-release-keep-a-changelog':
-        specifier: ^0.5.1
-        version: 0.5.1(semantic-release@25.0.9(supports-color@7.2.0)(typescript@6.0.3))
+        specifier: ^0.6.0
+        version: 0.6.0(semantic-release@25.0.9(supports-color@7.2.0)(typescript@6.0.3))
       '@earendil-works/pi-ai':
         specifier: 1.1.0
         version: 1.1.0(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.3)(supports-color@7.2.0)(undici@8.10.2)(ws@8.21.3)
@@ -102,11 +102,11 @@ packages:
   '@actions/io@3.0.2':
     resolution: {integrity: sha512-nRBchcMM+QK1pdjO7/idu86rbJI5YHUKCvKs0KxnSYbVe3F51UfGxuZX4Qy/fWlp6l7gWFwIkrOzN+oUK03kfw==}
 
-  '@alexanderfortin/semantic-release-keep-a-changelog@0.5.1':
-    resolution: {integrity: sha512-Ij0xzVQJA62I03GSolyDj5MTTsAKbdCUlVZf3cVghXS4O49TaRr8HobsbC/4Ax6lq0zRCckmW5fPiOtPf7JBUA==}
+  '@alexanderfortin/semantic-release-keep-a-changelog@0.6.0':
+    resolution: {integrity: sha512-MS+/+kt0QJ8qbOpUPEabcs8TTIZCQVal8hT/B+28kxr89Ua7jHpaOYNaRDle1hZ51bkfH2/smjAfYRL7VlRENQ==}
     engines: {pnpm: '>=12.11.2'}
     peerDependencies:
-      semantic-release: '>=24.2.9'
+      semantic-release: '>=25.0.9'
 
   '@anthropic-ai/sdk@0.129.0':
     resolution: {integrity: sha512-MH7LB20kNpGLUpPTe2OG5XvL/KhX8HUO9XyBaFjgFk6TLS4Xjt0VPIuMKywe7POKKPslX+QxSlVok9e+8kG5Nw==}
@@ -2835,7 +2835,7 @@ snapshots:
 
   '@actions/io@3.0.2': {}
 
-  '@alexanderfortin/semantic-release-keep-a-changelog@0.5.1(semantic-release@25.0.9(supports-color@7.2.0)(typescript@6.0.3))':
+  '@alexanderfortin/semantic-release-keep-a-changelog@0.6.0(semantic-release@25.0.9(supports-color@7.2.0)(typescript@6.0.3))':
     dependencies:
       '@semantic-release/error': 4.0.0
       conventional-changelog-writer: 9.2.1
