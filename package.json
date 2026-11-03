@@ -76,7 +76,7 @@
     "@types/node": "^26.6.6",
     "@typescript-eslint/eslint-plugin": "^8.72.1",
     "@typescript-eslint/parser": "^8.72.1",
-    "@vitest/coverage-v8": "^5.0.5",
+    "@vitest/coverage-v8": "^5.1.0",
     "@vitest/eslint-plugin": "^1.6.28",
     "eslint": "^10.13.0",
     "eslint-config-prettier": "10.1.8",
@@ -84,7 +84,7 @@
     "prettier-plugin-organize-imports": "4.3.0",
     "semantic-release": "25.0.9",
     "typescript": "6.0.3",
-    "vitest": "^5.0.5"
+    "vitest": "^5.1.0"
   },
   "dependencies": {
     "@tavily/core": "^0.7.14",
