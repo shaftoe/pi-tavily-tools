@@ -87,7 +87,7 @@
     "vitest": "^5.0.5"
   },
   "dependencies": {
-    "@tavily/core": "^0.7.14",
+    "@tavily/core": "^1.1.0",
     "temporal-polyfill": "^1.0.6"
   }
 }
