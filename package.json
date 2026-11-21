@@ -62,9 +62,9 @@
   },
   "devDependencies": {
     "@alexanderfortin/semantic-release-keep-a-changelog": "^0.6.2",
-    "@earendil-works/pi-ai": "^1.5.2",
-    "@earendil-works/pi-coding-agent": "^1.5.2",
-    "@earendil-works/pi-tui": "^1.5.2",
+    "@earendil-works/pi-ai": "^1.6.0",
+    "@earendil-works/pi-coding-agent": "^1.6.0",
+    "@earendil-works/pi-tui": "^1.6.0",
     "@semantic-release/changelog": "7.0.0",
     "@semantic-release/commit-analyzer": "13.0.1",
     "@semantic-release/exec": "7.1.0",
